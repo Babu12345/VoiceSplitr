@@ -61,7 +61,9 @@ struct SplitResultsView: View {
             .buttonStyle(.borderedProminent)
             .listRowInsets(EdgeInsets())
             .listRowBackground(Color.clear)
+        }
 
+        Section {
             Button {
                 _ = viewModel.saveSession(to: modelContext)
                 dismiss()
