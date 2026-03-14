@@ -11,6 +11,18 @@ struct VoiceInputView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section("Items on the Bill") {
+                ForEach(viewModel.editableItems) { item in
+                    HStack {
+                        Text(item.name)
+                        Spacer()
+                        Text("$\(String(format: "%.2f", item.price * Double(item.quantity)))")
+                            .foregroundStyle(.secondary)
+                    }
+                    .font(.callout)
+                }
+            }
+
             Section("Speaker Name") {
                 TextField("e.g., John", text: $viewModel.currentSpeakerName)
             }
