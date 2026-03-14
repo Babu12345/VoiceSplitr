@@ -28,8 +28,8 @@ actor ClaudeAPIClient {
 
     // MARK: - Proxy Configuration
     // Set your Railway proxy URL here once deployed (e.g. "https://voicesplit-proxy-production.up.railway.app")
-    private static let proxyBaseURL: String? = nil
-    private static let appSecret: String? = nil  // Must match APP_SECRET env var on server
+    private static let proxyBaseURL: String? = "https://web-production-96a21.up.railway.app"
+    private static let appSecret: String? = "2461a022f58a6fe483ae1ec40aa86fb15d5057ad5e1c78390fea0e09b3d37232"
 
     private var useProxy: Bool {
         Self.proxyBaseURL != nil
