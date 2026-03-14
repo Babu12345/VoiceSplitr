@@ -3,7 +3,7 @@ import SwiftUI
 struct SplitResultsView: View {
     @Bindable var viewModel: NewSessionViewModel
     @State private var isEditing = false
-    @State private var editableAssignments: [String: Set<String>] = [:]  // itemName -> Set<personName>
+    @State private var editModel = EditAssignmentModel()
 
     var body: some View {
         List {
@@ -13,7 +13,6 @@ struct SplitResultsView: View {
                 resultsContent
             }
         }
-        .animation(.default, value: isEditing)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(isEditing ? "Done" : "Edit") {
@@ -67,35 +66,30 @@ struct SplitResultsView: View {
 
     @ViewBuilder
     private var editingContent: some View {
-        let people = viewModel.assignmentResult?.people ?? []
-
-        ForEach(viewModel.editableItems) { item in
+        ForEach(editModel.items) { editItem in
             Section {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text(item.name)
-                            .font(.headline)
-                        if item.quantity > 1 {
-                            Text("x\(item.quantity)")
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        Text("$\(String(format: "%.2f", item.price * Double(item.quantity)))")
+                HStack {
+                    Text(editItem.name)
+                        .font(.headline)
+                    if editItem.quantity > 1 {
+                        Text("x\(editItem.quantity)")
                             .foregroundStyle(.secondary)
                     }
+                    Spacer()
+                    Text("$\(String(format: "%.2f", editItem.price * Double(editItem.quantity)))")
+                        .foregroundStyle(.secondary)
+                }
 
-                    ForEach(people, id: \.self) { person in
-                        let isAssigned = editableAssignments[item.name]?.contains(person) ?? false
-                        Button {
-                            toggleAssignment(item: item.name, person: person)
-                        } label: {
-                            HStack {
-                                Image(systemName: isAssigned ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(isAssigned ? Color.accentColor : .secondary)
-                                Text(person)
-                                    .foregroundStyle(.primary)
-                                Spacer()
-                            }
+                ForEach(editModel.people, id: \.self) { person in
+                    Button {
+                        editModel.toggle(item: editItem.name, person: person)
+                    } label: {
+                        HStack {
+                            Image(systemName: editModel.isAssigned(item: editItem.name, person: person) ? "checkmark.circle.fill" : "circle")
+                                .foregroundStyle(editModel.isAssigned(item: editItem.name, person: person) ? Color.accentColor : .secondary)
+                            Text(person)
+                                .foregroundStyle(.primary)
+                            Spacer()
                         }
                     }
                 }
@@ -106,36 +100,67 @@ struct SplitResultsView: View {
     // MARK: - Edit Actions
 
     private func startEditing() {
-        editableAssignments = [:]
-        if let result = viewModel.assignmentResult {
-            for assignment in result.assignments {
-                editableAssignments[assignment.itemName] = Set(assignment.assignedTo)
-            }
-        }
+        editModel = EditAssignmentModel(
+            items: viewModel.editableItems,
+            people: viewModel.assignmentResult?.people.sorted() ?? [],
+            assignments: viewModel.assignmentResult?.assignments ?? []
+        )
         isEditing = true
-    }
-
-    private func toggleAssignment(item: String, person: String) {
-        if editableAssignments[item] == nil {
-            editableAssignments[item] = []
-        }
-        if editableAssignments[item]!.contains(person) {
-            editableAssignments[item]!.remove(person)
-        } else {
-            editableAssignments[item]!.insert(person)
-        }
     }
 
     private func applyEdits() {
         guard var result = viewModel.assignmentResult else { return }
-
-        result.assignments = viewModel.editableItems.map { item in
-            let people = editableAssignments[item.name] ?? []
-            return ItemAssignment(itemName: item.name, assignedTo: Array(people).sorted())
-        }
-
+        result.assignments = editModel.toAssignments()
         viewModel.assignmentResult = result
         viewModel.calculateFinalSplits()
         isEditing = false
+    }
+}
+
+// MARK: - Edit Model
+
+@Observable
+class EditAssignmentModel {
+    struct EditItem: Identifiable {
+        let id: UUID
+        let name: String
+        let price: Double
+        let quantity: Int
+    }
+
+    var items: [EditItem] = []
+    var people: [String] = []
+    var assignments: [String: [String: Bool]] = [:]  // [itemName: [personName: Bool]]
+
+    init() {}
+
+    init(items: [ParsedLineItem], people: [String], assignments: [ItemAssignment]) {
+        self.items = items.map { EditItem(id: $0.id, name: $0.name, price: $0.price, quantity: $0.quantity) }
+        self.people = people
+
+        for item in items {
+            var personMap: [String: Bool] = [:]
+            let assignment = assignments.first { $0.itemName == item.name }
+            for person in people {
+                personMap[person] = assignment?.assignedTo.contains(person) ?? false
+            }
+            self.assignments[item.name] = personMap
+        }
+    }
+
+    func isAssigned(item: String, person: String) -> Bool {
+        assignments[item]?[person] ?? false
+    }
+
+    func toggle(item: String, person: String) {
+        let current = assignments[item]?[person] ?? false
+        assignments[item]?[person] = !current
+    }
+
+    func toAssignments() -> [ItemAssignment] {
+        items.map { item in
+            let assigned = people.filter { assignments[item.name]?[$0] == true }
+            return ItemAssignment(itemName: item.name, assignedTo: assigned)
+        }
     }
 }

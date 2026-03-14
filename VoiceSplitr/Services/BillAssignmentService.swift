@@ -25,11 +25,21 @@ class BillAssignmentService {
 
         let systemPrompt = """
         You are a bill splitter assistant. Given a list of receipt items and voice transcripts \
-        from different people describing what they ordered, match each item to the person(s) who ordered it.
+        describing what people ordered, match each item to the person(s) who ordered it.
 
-        If an item is shared, assign it to all people who mentioned it.
-        If an item is not mentioned by anyone, leave assigned_to as an empty array.
-        Identify people by the speaker names provided in the transcripts.
+        Important rules:
+        - A single transcript may describe what MULTIPLE people ordered. Extract all names mentioned.
+        - "I", "me", or "my" refers to the speaker name shown in brackets before the transcript.
+        - If someone says two people "shared" or "split" an item, assign that item to both of them.
+        - Phrases like "the rest", "everything else", "the other items" mean ALL remaining items \
+        that were NOT explicitly assigned to someone else. Only assign those unmentioned items.
+        - Be precise: if someone says "I got the burger", ONLY assign the burger to them, not other items.
+        - Each item should be assigned to exactly the people who ordered it. Do NOT assign all items to one person \
+        unless they explicitly said they ordered everything.
+        - If an item is not mentioned by anyone, leave assigned_to as an empty array.
+        - The "people" array must include ALL people mentioned across all transcripts, including the speakers.
+        - Use exact names as spoken (capitalize first letter).
+        - item_name in the output must exactly match the item names from the receipt items list.
 
         Return ONLY valid JSON matching this exact schema (no markdown, no explanation):
         {
