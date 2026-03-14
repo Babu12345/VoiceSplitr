@@ -45,4 +45,9 @@ struct ItemAssignment: Codable {
         case itemName = "item_name"
         case assignedTo = "assigned_to"
     }
+
+    init(itemName: String, assignedTo: [String]) {
+        self.itemName = itemName
+        self.assignedTo = assignedTo
+    }
 }

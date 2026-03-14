@@ -20,7 +20,7 @@ struct VoiceInputView: View {
                                 .foregroundStyle(.secondary)
                         }
                         Spacer()
-                        Text("$\(String(format: "%.2f", item.price * Double(item.quantity)))")
+                        Text("$\(String(format: "%.2f", item.price))")
                             .foregroundStyle(.secondary)
                     }
                     .font(.callout)

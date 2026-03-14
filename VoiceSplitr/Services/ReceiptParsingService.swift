@@ -27,6 +27,7 @@ class ReceiptParsingService {
         }
 
         Rules:
+        - price must be the PER-UNIT price, not the line total. If the receipt shows "2 x Burger $18", price is 9.00 and quantity is 2
         - Prices should be numbers (not strings)
         - Quantity defaults to 1 if not specified
         - Use null for subtotal/tax/total if not visible on the receipt
