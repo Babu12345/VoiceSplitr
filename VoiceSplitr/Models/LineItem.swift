@@ -14,7 +14,7 @@ final class LineItem {
     var assignedTo: [Person]
 
     var totalPrice: Double {
-        price * Double(quantity)
+        price
     }
 
     init(name: String, price: Double, quantity: Int = 1) {

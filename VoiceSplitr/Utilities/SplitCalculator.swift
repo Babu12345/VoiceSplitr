@@ -24,7 +24,7 @@ struct SplitCalculator {
             let assignees = item.assignedTo
             guard !assignees.isEmpty else { continue }
 
-            let sharePerPerson = item.totalPrice / Double(assignees.count)
+            let sharePerPerson = item.price / Double(assignees.count)
 
             for person in assignees {
                 if personItems[person.id] == nil {
@@ -39,7 +39,7 @@ struct SplitCalculator {
         if !unassignedItems.isEmpty && !personItems.isEmpty {
             let allPersonIDs = Array(personItems.keys)
             for item in unassignedItems {
-                let sharePerPerson = item.totalPrice / Double(allPersonIDs.count)
+                let sharePerPerson = item.price / Double(allPersonIDs.count)
                 for personID in allPersonIDs {
                     personItems[personID]?.items.append((item.name, sharePerPerson))
                 }

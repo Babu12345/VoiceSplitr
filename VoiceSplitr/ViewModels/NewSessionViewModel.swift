@@ -41,7 +41,7 @@ class NewSessionViewModel {
     var taxAmount: Double = 0
     var tipPercentage: Double = 18.0
     var tipAmount: Double {
-        (subtotal * tipPercentage / 100 * 100).rounded() / 100
+        (subtotal * tipPercentage).rounded() / 100
     }
     var sessionTitle: String = ""
 
@@ -201,14 +201,28 @@ class NewSessionViewModel {
 
         let actualSubtotal = editableItems.reduce(0.0) { $0 + $1.price }
 
-        splits = personMap.map { name, data in
+        let sortedPeople = personMap.sorted { $0.key < $1.key }
+        var tempSplits: [PersonSplit] = []
+
+        for (index, (name, data)) in sortedPeople.enumerated() {
             let itemsSubtotal = data.total
             let proportion = actualSubtotal > 0 ? itemsSubtotal / actualSubtotal : 0
-            let taxShare = (proportion * taxAmount * 100).rounded() / 100
-            let tipShare = (proportion * tipAmount * 100).rounded() / 100
+
+            let taxShare: Double
+            let tipShare: Double
+
+            if index == sortedPeople.count - 1 {
+                // Last person absorbs rounding remainder so totals match exactly
+                taxShare = ((taxAmount - tempSplits.reduce(0.0) { $0 + $1.taxShare }) * 100).rounded() / 100
+                tipShare = ((tipAmount - tempSplits.reduce(0.0) { $0 + $1.tipShare }) * 100).rounded() / 100
+            } else {
+                taxShare = (proportion * taxAmount * 100).rounded() / 100
+                tipShare = (proportion * tipAmount * 100).rounded() / 100
+            }
+
             let total = ((itemsSubtotal + taxShare + tipShare) * 100).rounded() / 100
 
-            return PersonSplit(
+            tempSplits.append(PersonSplit(
                 id: UUID(),
                 name: name,
                 items: data.items.map { (name: $0.0, amount: $0.1) },
@@ -216,8 +230,10 @@ class NewSessionViewModel {
                 taxShare: taxShare,
                 tipShare: tipShare,
                 total: total
-            )
-        }.sorted { $0.name < $1.name }
+            ))
+        }
+
+        splits = tempSplits
     }
 
     // MARK: - Save Session
