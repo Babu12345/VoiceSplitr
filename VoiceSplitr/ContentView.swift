@@ -9,20 +9,14 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color.themeBg.ignoresSafeArea()
-
+            Group {
                 if sessions.isEmpty {
                     emptyStateView
                 } else {
                     sessionListView
                 }
             }
-            .scrollContentBackground(.hidden)
-            .toolbarBackground(Color.themeBg, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle("VoiceSplitr")
-            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
