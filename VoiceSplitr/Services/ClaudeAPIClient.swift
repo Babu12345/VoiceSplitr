@@ -44,22 +44,8 @@ actor ClaudeAPIClient {
 
     private var apiKey: String? {
         if useProxy { return nil }
-        if let userKey = KeychainService.load(key: keychainKey) {
-            return userKey
-        }
-        return Self.bundledAPIKey
+        return KeychainService.load(key: keychainKey)
     }
-
-    private static let bundledAPIKey: String? = {
-        guard let url = Bundle.main.url(forResource: "Secrets", withExtension: "plist"),
-              let data = try? Data(contentsOf: url),
-              let dict = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: String],
-              let key = dict["CLAUDE_API_KEY"],
-              key != "YOUR_API_KEY_HERE" else {
-            return nil
-        }
-        return key
-    }()
 
     func sendMessage(system: String, userContent: [MessageContent]) async throws -> String {
         if !useProxy {

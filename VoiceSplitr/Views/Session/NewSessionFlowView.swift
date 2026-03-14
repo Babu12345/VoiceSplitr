@@ -43,7 +43,7 @@ struct NewSessionFlowView: View {
                     }
                 }
 
-                if viewModel.currentStep == .results {
+                if viewModel.currentStep == .share {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Done") {
                             _ = viewModel.saveSession(to: modelContext)
