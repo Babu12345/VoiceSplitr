@@ -5,6 +5,19 @@ struct ReceiptReviewView: View {
 
     var body: some View {
         List {
+            if let image = viewModel.receiptImage {
+                Section {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 300)
+                        .frame(maxWidth: .infinity)
+                        .listRowInsets(EdgeInsets())
+                } header: {
+                    Text("Receipt")
+                }
+            }
+
             Section("Receipt Items") {
                 ForEach($viewModel.editableItems) { $item in
                     HStack {
