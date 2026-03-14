@@ -82,15 +82,11 @@ struct ReceiptReviewView: View {
                     Slider(value: $viewModel.tipPercentage, in: 0...30, step: 1) {
                         Text("Tip Percentage")
                     }
-                    .onChange(of: viewModel.tipPercentage) { _, _ in
-                        viewModel.updateTipAmount()
-                    }
 
                     HStack {
                         ForEach([15, 18, 20, 25], id: \.self) { percent in
                             Button("\(percent)%") {
                                 viewModel.tipPercentage = Double(percent)
-                                viewModel.updateTipAmount()
                             }
                             .buttonStyle(.bordered)
                             .tint(viewModel.tipPercentage == Double(percent) ? Color.brandBlue : .secondary)
@@ -110,7 +106,6 @@ struct ReceiptReviewView: View {
 
             Section {
                 Button {
-                    viewModel.recalculateSubtotal()
                     viewModel.currentStep = .voiceInput
                 } label: {
                     Label("Continue to Voice Input", systemImage: "mic.fill")
@@ -119,9 +114,6 @@ struct ReceiptReviewView: View {
                 .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                 .listRowBackground(Color.clear)
             }
-        }
-        .onAppear {
-            viewModel.recalculateSubtotal()
         }
     }
 }

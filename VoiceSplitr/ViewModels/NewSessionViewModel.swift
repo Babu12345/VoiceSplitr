@@ -35,10 +35,14 @@ class NewSessionViewModel {
     var receiptImage: UIImage?
     var parsedReceipt: ParsedReceipt?
     var editableItems: [ParsedLineItem] = []
-    var subtotal: Double = 0
+    var subtotal: Double {
+        editableItems.reduce(0) { $0 + $1.price * Double($1.quantity) }
+    }
     var taxAmount: Double = 0
     var tipPercentage: Double = 18.0
-    var tipAmount: Double = 0
+    var tipAmount: Double {
+        (subtotal * tipPercentage / 100 * 100).rounded() / 100
+    }
     var sessionTitle: String = ""
 
     // Voice
@@ -75,9 +79,7 @@ class NewSessionViewModel {
             await MainActor.run {
                 self.parsedReceipt = parsed
                 self.editableItems = parsed.items
-                self.subtotal = parsed.subtotal ?? parsed.items.reduce(0) { $0 + $1.price * Double($1.quantity) }
                 self.taxAmount = parsed.tax ?? 0
-                self.updateTipAmount()
                 self.isProcessing = false
                 self.currentStep = .reviewItems
             }
@@ -101,12 +103,11 @@ class NewSessionViewModel {
     }
 
     func recalculateSubtotal() {
-        subtotal = editableItems.reduce(0) { $0 + $1.price * Double($1.quantity) }
-        updateTipAmount()
+        // subtotal and tipAmount are now computed properties — no manual update needed
     }
 
     func updateTipAmount() {
-        tipAmount = (subtotal * tipPercentage / 100 * 100).rounded() / 100
+        // tipAmount is now a computed property — no manual update needed
     }
 
     // MARK: - Voice Input
