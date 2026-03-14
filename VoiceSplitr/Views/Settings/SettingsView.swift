@@ -130,7 +130,9 @@ struct SettingsView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.themeBg)
+            .background(Color.themeBg.ignoresSafeArea())
+            .toolbarBackground(Color.themeBg, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

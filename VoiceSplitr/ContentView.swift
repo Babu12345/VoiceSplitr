@@ -9,7 +9,9 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
+            ZStack {
+                Color.themeBg.ignoresSafeArea()
+
                 if sessions.isEmpty {
                     emptyStateView
                 } else {
@@ -17,7 +19,8 @@ struct ContentView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.themeBg)
+            .toolbarBackground(Color.themeBg, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle("VoiceSplitr")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -130,93 +133,98 @@ struct SessionDetailView: View {
     @Bindable var session: SplitSession
 
     var body: some View {
-        List {
-            if let imageData = session.receiptImageData,
-               let uiImage = UIImage(data: imageData) {
-                Section {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 300)
-                        .frame(maxWidth: .infinity)
-                        .listRowInsets(EdgeInsets())
-                } header: {
-                    Text("Receipt")
-                }
-            }
+        ZStack {
+            Color.themeBg.ignoresSafeArea()
 
-            Section("Title") {
-                TextField("Session name", text: $session.title)
-            }
-
-            Section("Items") {
-                ForEach(session.lineItems) { item in
-                    HStack {
-                        Text(item.name)
-                        Spacer()
-                        Text("$\(String(format: "%.2f", item.totalPrice))")
-                            .foregroundStyle(.secondary)
+            List {
+                if let imageData = session.receiptImageData,
+                   let uiImage = UIImage(data: imageData) {
+                    Section {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxHeight: 300)
+                            .frame(maxWidth: .infinity)
+                            .listRowInsets(EdgeInsets())
+                    } header: {
+                        Text("Receipt")
                     }
                 }
-            }
 
-            Section("Split") {
-                ForEach(session.people) { person in
-                    VStack(alignment: .leading, spacing: 6) {
+                Section("Title") {
+                    TextField("Session name", text: $session.title)
+                }
+
+                Section("Items") {
+                    ForEach(session.lineItems) { item in
                         HStack {
-                            Text(person.name)
-                                .fontWeight(.medium)
+                            Text(item.name)
                             Spacer()
-                            Text("$\(String(format: "%.2f", person.shareAmount))")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color.brandBlue)
+                            Text("$\(String(format: "%.2f", item.totalPrice))")
+                                .foregroundStyle(.secondary)
                         }
+                    }
+                }
 
-                        ForEach(person.assignedItems) { item in
+                Section("Split") {
+                    ForEach(session.people) { person in
+                        VStack(alignment: .leading, spacing: 6) {
                             HStack {
-                                Text(item.name)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                Text(person.name)
+                                    .fontWeight(.medium)
                                 Spacer()
-                                let share = item.totalPrice / Double(max(item.assignedTo.count, 1))
-                                Text("$\(String(format: "%.2f", share))")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                Text("$\(String(format: "%.2f", person.shareAmount))")
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.brandBlue)
+                            }
+
+                            ForEach(person.assignedItems) { item in
+                                HStack {
+                                    Text(item.name)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    Spacer()
+                                    let share = item.totalPrice / Double(max(item.assignedTo.count, 1))
+                                    Text("$\(String(format: "%.2f", share))")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                         }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
                 }
-            }
 
-            Section {
-                HStack {
-                    Text("Subtotal")
-                    Spacer()
-                    Text("$\(String(format: "%.2f", session.subtotal))")
-                }
-                HStack {
-                    Text("Tax")
-                    Spacer()
-                    Text("$\(String(format: "%.2f", session.taxAmount))")
-                }
-                HStack {
-                    Text("Tip")
-                    Spacer()
-                    Text("$\(String(format: "%.2f", session.tipAmount))")
-                }
-                HStack {
-                    Text("Total")
-                        .fontWeight(.bold)
-                    Spacer()
-                    Text("$\(String(format: "%.2f", session.totalAmount))")
-                        .fontWeight(.bold)
-                        .foregroundStyle(Color.brandBlue)
+                Section {
+                    HStack {
+                        Text("Subtotal")
+                        Spacer()
+                        Text("$\(String(format: "%.2f", session.subtotal))")
+                    }
+                    HStack {
+                        Text("Tax")
+                        Spacer()
+                        Text("$\(String(format: "%.2f", session.taxAmount))")
+                    }
+                    HStack {
+                        Text("Tip")
+                        Spacer()
+                        Text("$\(String(format: "%.2f", session.tipAmount))")
+                    }
+                    HStack {
+                        Text("Total")
+                            .fontWeight(.bold)
+                        Spacer()
+                        Text("$\(String(format: "%.2f", session.totalAmount))")
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.brandBlue)
+                    }
                 }
             }
+            .scrollContentBackground(.hidden)
         }
-        .scrollContentBackground(.hidden)
-        .background(Color.themeBg)
+        .toolbarBackground(Color.themeBg, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(session.title)
     }
 }

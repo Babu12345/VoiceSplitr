@@ -91,6 +91,6 @@ struct ShareResultsView: View {
             }
             .padding(.vertical)
         }
-        .background(Color.themeBg)
+        .background(Color.themeBg.ignoresSafeArea())
     }
 }

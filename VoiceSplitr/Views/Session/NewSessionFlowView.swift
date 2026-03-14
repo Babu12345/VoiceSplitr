@@ -32,8 +32,10 @@ struct NewSessionFlowView: View {
                     }
                 }
             }
-            .background(Color.themeBg)
+            .background(Color.themeBg.ignoresSafeArea())
             .scrollContentBackground(.hidden)
+            .toolbarBackground(Color.themeBg, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle(viewModel.currentStep.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
