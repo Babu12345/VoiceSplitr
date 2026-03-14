@@ -8,6 +8,9 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
+            ZStack {
+            Color.themeBg.ignoresSafeArea()
+
             List {
                 #if DEBUG
                 Section {
@@ -130,7 +133,7 @@ struct SettingsView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.themeBg.ignoresSafeArea())
+            }
             .toolbarBackground(Color.themeBg, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle("Settings")

@@ -7,32 +7,35 @@ struct NewSessionFlowView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Step indicator
-                stepIndicator
-                    .padding(.horizontal)
-                    .padding(.top, 8)
+            ZStack {
+                Color.themeBg.ignoresSafeArea()
 
-                Divider()
-                    .padding(.top, 8)
+                VStack(spacing: 0) {
+                    // Step indicator
+                    stepIndicator
+                        .padding(.horizontal)
+                        .padding(.top, 8)
 
-                // Step content
-                Group {
-                    switch viewModel.currentStep {
-                    case .captureReceipt:
-                        ReceiptCaptureView(viewModel: viewModel)
-                    case .reviewItems:
-                        ReceiptReviewView(viewModel: viewModel)
-                    case .voiceInput:
-                        VoiceInputView(viewModel: viewModel)
-                    case .results:
-                        SplitResultsView(viewModel: viewModel)
-                    case .share:
-                        ShareResultsView(viewModel: viewModel)
+                    Divider()
+                        .padding(.top, 8)
+
+                    // Step content
+                    Group {
+                        switch viewModel.currentStep {
+                        case .captureReceipt:
+                            ReceiptCaptureView(viewModel: viewModel)
+                        case .reviewItems:
+                            ReceiptReviewView(viewModel: viewModel)
+                        case .voiceInput:
+                            VoiceInputView(viewModel: viewModel)
+                        case .results:
+                            SplitResultsView(viewModel: viewModel)
+                        case .share:
+                            ShareResultsView(viewModel: viewModel)
+                        }
                     }
                 }
             }
-            .background(Color.themeBg.ignoresSafeArea())
             .scrollContentBackground(.hidden)
             .toolbarBackground(Color.themeBg, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
