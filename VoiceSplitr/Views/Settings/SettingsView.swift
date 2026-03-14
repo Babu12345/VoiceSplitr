@@ -64,6 +64,62 @@ struct SettingsView: View {
                 }
                 #endif
 
+                Section {
+                    Link(destination: URL(string: "https://babu12345.github.io/VoiceSplitr/")!) {
+                        HStack {
+                            Image(systemName: "globe")
+                                .foregroundStyle(.tint)
+                            Text("Visit Website")
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .foregroundStyle(.primary)
+
+                    Link(destination: URL(string: "https://babu12345.github.io/VoiceSplitr/privacy_policy/")!) {
+                        HStack {
+                            Image(systemName: "hand.raised")
+                                .foregroundStyle(.tint)
+                            Text("Privacy Policy")
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .foregroundStyle(.primary)
+
+                    Link(destination: URL(string: "https://babu12345.github.io/VoiceSplitr/terms/")!) {
+                        HStack {
+                            Image(systemName: "doc.text")
+                                .foregroundStyle(.tint)
+                            Text("Terms of Use")
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .foregroundStyle(.primary)
+
+                    Link(destination: URL(string: "https://babu12345.github.io/VoiceSplitr/support/")!) {
+                        HStack {
+                            Image(systemName: "questionmark.circle")
+                                .foregroundStyle(.tint)
+                            Text("Support")
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .foregroundStyle(.primary)
+                } header: {
+                    Text("Support")
+                }
+
                 Section("About") {
                     HStack {
                         Text("Version")
