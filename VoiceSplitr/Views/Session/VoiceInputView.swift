@@ -4,59 +4,43 @@ struct VoiceInputView: View {
     @Bindable var viewModel: NewSessionViewModel
 
     var body: some View {
-        VStack(spacing: 0) {
-            List {
-                Section {
-                    Text("Each person should describe what they ordered. Tap the microphone to start recording.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
+        List {
+            Section {
+                Text("Each person should describe what they ordered. Tap the microphone to start recording.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
 
-                Section("Speaker Name") {
-                    TextField("e.g., John", text: $viewModel.currentSpeakerName)
-                }
+            Section("Speaker Name") {
+                TextField("e.g., John", text: $viewModel.currentSpeakerName)
+            }
 
-                Section("Live Transcript") {
+            Section {
+                VStack(spacing: 16) {
+                    RecordingButton(isRecording: viewModel.speechService.isRecording) {
+                        toggleRecording()
+                    }
+
                     if viewModel.speechService.currentTranscript.isEmpty {
                         Text(viewModel.speechService.isRecording ? "Listening..." : "Tap the microphone to start")
                             .foregroundStyle(.secondary)
                             .italic()
+                            .font(.callout)
                     } else {
                         Text(viewModel.speechService.currentTranscript)
+                            .font(.body)
                     }
                 }
-
-                if !viewModel.transcripts.isEmpty {
-                    Section("Recorded Transcripts") {
-                        ForEach(Array(viewModel.transcripts.enumerated()), id: \.offset) { index, transcript in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(transcript.speaker)
-                                    .font(.headline)
-                                Text(transcript.text)
-                                    .font(.body)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(.vertical, 4)
-                        }
-                        .onDelete { offsets in
-                            for offset in offsets {
-                                viewModel.removeTranscript(at: offset)
-                            }
-                        }
-                    }
-                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+            } header: {
+                Text("Live Transcript")
             }
 
-            Divider()
-
-            // Bottom controls
-            VStack(spacing: 16) {
-                RecordingButton(isRecording: viewModel.speechService.isRecording) {
-                    toggleRecording()
-                }
-
-                if !viewModel.speechService.isRecording && !viewModel.speechService.currentTranscript.isEmpty {
-                    HStack(spacing: 16) {
+            if !viewModel.speechService.isRecording && !viewModel.speechService.currentTranscript.isEmpty {
+                Section {
+                    HStack {
+                        Spacer()
                         Button("Discard") {
                             viewModel.speechService.currentTranscript = ""
                         }
@@ -67,27 +51,56 @@ struct VoiceInputView: View {
                             viewModel.addTranscript()
                         }
                         .buttonStyle(.borderedProminent)
+                        Spacer()
+                    }
+                    .listRowBackground(Color.clear)
+                }
+            }
+
+            if !viewModel.transcripts.isEmpty {
+                Section("Recorded Transcripts") {
+                    ForEach(Array(viewModel.transcripts.enumerated()), id: \.offset) { index, transcript in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(transcript.speaker)
+                                .font(.headline)
+                            Text(transcript.text)
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .onDelete { offsets in
+                        for offset in offsets {
+                            viewModel.removeTranscript(at: offset)
+                        }
                     }
                 }
+            }
 
-                if !viewModel.transcripts.isEmpty && !viewModel.speechService.isRecording {
+            if !viewModel.transcripts.isEmpty && !viewModel.speechService.isRecording {
+                Section {
                     Button {
                         Task { await viewModel.processAssignments() }
                     } label: {
-                        if viewModel.isProcessing {
-                            ProgressView()
-                                .padding(.horizontal, 20)
-                        } else {
-                            Label("Process & Split Bill", systemImage: "wand.and.stars")
-                                .font(.headline)
+                        HStack {
+                            Spacer()
+                            if viewModel.isProcessing {
+                                ProgressView()
+                                    .padding(.horizontal, 20)
+                            } else {
+                                Label("Process & Split Bill", systemImage: "wand.and.stars")
+                                    .font(.headline)
+                            }
+                            Spacer()
                         }
+                        .padding(.vertical, 4)
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(viewModel.isProcessing)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
                 }
             }
-            .padding()
-            .background(.bar)
         }
         .task {
             await viewModel.speechService.requestAuthorization()
