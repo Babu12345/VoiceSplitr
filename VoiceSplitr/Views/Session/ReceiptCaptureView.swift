@@ -5,6 +5,7 @@ struct ReceiptCaptureView: View {
     @Bindable var viewModel: NewSessionViewModel
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showingCamera = false
+    @State private var showingConsentSheet = false
 
     var body: some View {
         ScrollView {
@@ -27,7 +28,11 @@ struct ReceiptCaptureView: View {
                         .buttonStyle(.bordered)
 
                         Button {
-                            Task { await viewModel.parseReceiptImage() }
+                            if DataSharingConsent.hasConsented {
+                                Task { await viewModel.parseReceiptImage() }
+                            } else {
+                                showingConsentSheet = true
+                            }
                         } label: {
                             if viewModel.isProcessing {
                                 ProgressView()
@@ -86,6 +91,18 @@ struct ReceiptCaptureView: View {
         }
         .fullScreenCover(isPresented: $showingCamera) {
             CameraView(image: $viewModel.receiptImage)
+        }
+        .sheet(isPresented: $showingConsentSheet) {
+            DataSharingConsentView(
+                onAgree: {
+                    DataSharingConsent.setConsent(true)
+                    showingConsentSheet = false
+                    Task { await viewModel.parseReceiptImage() }
+                },
+                onCancel: {
+                    showingConsentSheet = false
+                }
+            )
         }
     }
 }

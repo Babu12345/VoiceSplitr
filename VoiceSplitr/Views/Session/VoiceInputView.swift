@@ -2,6 +2,7 @@ import SwiftUI
 
 struct VoiceInputView: View {
     @Bindable var viewModel: NewSessionViewModel
+    @State private var showingConsentSheet = false
 
     var body: some View {
         List {
@@ -94,7 +95,11 @@ struct VoiceInputView: View {
             if !viewModel.transcripts.isEmpty && !viewModel.speechService.isRecording {
                 Section {
                     Button {
-                        Task { await viewModel.processAssignments() }
+                        if DataSharingConsent.hasConsented {
+                            Task { await viewModel.processAssignments() }
+                        } else {
+                            showingConsentSheet = true
+                        }
                     } label: {
                         HStack {
                             Spacer()
@@ -118,6 +123,18 @@ struct VoiceInputView: View {
         }
         .task {
             await viewModel.speechService.requestAuthorization()
+        }
+        .sheet(isPresented: $showingConsentSheet) {
+            DataSharingConsentView(
+                onAgree: {
+                    DataSharingConsent.setConsent(true)
+                    showingConsentSheet = false
+                    Task { await viewModel.processAssignments() }
+                },
+                onCancel: {
+                    showingConsentSheet = false
+                }
+            )
         }
     }
 
