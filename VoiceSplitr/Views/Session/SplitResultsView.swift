@@ -2,6 +2,8 @@ import SwiftUI
 
 struct SplitResultsView: View {
     @Bindable var viewModel: NewSessionViewModel
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @State private var isEditing = false
     @State private var editModel = EditAssignmentModel()
 
@@ -57,6 +59,22 @@ struct SplitResultsView: View {
                 .padding(.vertical, 4)
             }
             .buttonStyle(.borderedProminent)
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+
+            Button {
+                _ = viewModel.saveSession(to: modelContext)
+                dismiss()
+            } label: {
+                HStack {
+                    Spacer()
+                    Label("Save & Close", systemImage: "checkmark.circle")
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.bordered)
             .listRowInsets(EdgeInsets())
             .listRowBackground(Color.clear)
         }
