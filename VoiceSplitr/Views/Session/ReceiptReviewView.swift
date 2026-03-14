@@ -135,6 +135,15 @@ struct ReceiptReviewView: View {
                 .listRowBackground(Color.clear)
             }
         }
+        .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }
+            }
+        }
         .fullScreenCover(isPresented: $showingFullReceipt) {
             if let image = viewModel.receiptImage {
                 ZoomableReceiptView(image: image)
