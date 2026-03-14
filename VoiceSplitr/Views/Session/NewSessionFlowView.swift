@@ -4,6 +4,7 @@ struct NewSessionFlowView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = NewSessionViewModel()
+    @State private var showingDiscardAlert = false
 
     var body: some View {
         NavigationStack {
@@ -50,14 +51,27 @@ struct NewSessionFlowView: View {
                     }
                 }
 
-                if viewModel.currentStep == .share {
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if viewModel.currentStep == .share {
                         Button("Done") {
                             _ = viewModel.saveSession(to: modelContext)
                             dismiss()
                         }
+                    } else if viewModel.currentStep != .captureReceipt {
+                        Button {
+                            showingDiscardAlert = true
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
+            }
+            .alert("Discard Split?", isPresented: $showingDiscardAlert) {
+                Button("Discard", role: .destructive) { dismiss() }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Your current progress will be lost.")
             }
             .alert("Error", isPresented: .init(
                 get: { viewModel.errorMessage != nil },

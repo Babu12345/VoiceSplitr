@@ -22,6 +22,7 @@ struct ContentView: View {
             .toolbarBackground(Color.themeBg, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle("VoiceSplitr")
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
