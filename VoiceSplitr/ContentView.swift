@@ -126,6 +126,7 @@ struct SessionRowView: View {
 
 struct SessionDetailView: View {
     @Bindable var session: SplitSession
+    @State private var showingFullReceipt = false
 
     var body: some View {
         List {
@@ -138,8 +139,14 @@ struct SessionDetailView: View {
                         .frame(maxHeight: 300)
                         .frame(maxWidth: .infinity)
                         .listRowInsets(EdgeInsets())
+                        .onTapGesture {
+                            showingFullReceipt = true
+                        }
                 } header: {
                     Text("Receipt")
+                } footer: {
+                    Text("Tap to zoom")
+                        .font(.caption2)
                 }
             }
 
@@ -214,6 +221,12 @@ struct SessionDetailView: View {
             }
         }
         .navigationTitle(session.title)
+        .fullScreenCover(isPresented: $showingFullReceipt) {
+            if let imageData = session.receiptImageData,
+               let uiImage = UIImage(data: imageData) {
+                ZoomableReceiptView(image: uiImage)
+            }
+        }
     }
 }
 
