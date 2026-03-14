@@ -1,0 +1,92 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Main gradient (blue to indigo) -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4D9EFF"/>
+      <stop offset="100%" style="stop-color:#3D59E6"/>
+    </linearGradient>
+
+    <!-- Subtle inner shadow -->
+    <linearGradient id="innerGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.2"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
+    </linearGradient>
+
+    <!-- Microphone gradient (same as SpeechWriterAI) -->
+    <linearGradient id="micGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#D6E4FF"/>
+    </linearGradient>
+
+    <!-- Receipt gradient -->
+    <linearGradient id="receiptGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#E0EAFF;stop-opacity:0.65"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bgGradient)"/>
+
+  <!-- Inner glow overlay -->
+  <rect width="1024" height="512" rx="224" fill="url(#innerGlow)"/>
+
+  <!-- Receipt/document (behind mic, tilted left) -->
+  <g transform="translate(380, 430) rotate(-15) translate(-380, -430)">
+    <rect x="140" y="250" width="280" height="360" rx="18" fill="url(#receiptGradient)"/>
+    <!-- Dollar sign -->
+    <text x="210" y="320" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="60" fill="#7BA8D8" opacity="0.6">$</text>
+    <line x1="190" y1="330" x2="370" y2="330" stroke="#A0B8E0" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+    <line x1="190" y1="375" x2="355" y2="375" stroke="#A0B8E0" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+    <line x1="190" y1="420" x2="340" y2="420" stroke="#A0B8E0" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+    <line x1="190" y1="465" x2="360" y2="465" stroke="#A0B8E0" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+    <line x1="190" y1="510" x2="330" y2="510" stroke="#A0B8E0" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+  </g>
+
+  <!-- Microphone body (exact SpeechWriterAI proportions) -->
+  <rect x="362" y="200" width="300" height="420" rx="150" fill="url(#micGradient)"/>
+
+  <!-- Microphone grille lines (exact SpeechWriterAI) -->
+  <line x1="412" y1="300" x2="612" y2="300" stroke="#C7D2FE" stroke-width="8" stroke-linecap="round"/>
+  <line x1="412" y1="360" x2="612" y2="360" stroke="#C7D2FE" stroke-width="8" stroke-linecap="round"/>
+  <line x1="412" y1="420" x2="612" y2="420" stroke="#C7D2FE" stroke-width="8" stroke-linecap="round"/>
+  <line x1="412" y1="480" x2="612" y2="480" stroke="#C7D2FE" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Microphone stand arc (exact SpeechWriterAI) -->
+  <path d="M280 520 Q280 720 512 720 Q744 720 744 520"
+        fill="none"
+        stroke="white"
+        stroke-width="40"
+        stroke-linecap="round"/>
+
+  <!-- Microphone stand vertical (smaller) -->
+  <line x1="512" y1="720" x2="512" y2="800" stroke="white" stroke-width="32" stroke-linecap="round"/>
+
+  <!-- Microphone stand base (smaller) -->
+  <line x1="420" y1="800" x2="604" y2="800" stroke="white" stroke-width="32" stroke-linecap="round"/>
+
+  <!-- 3 Speaker arcs above mic -->
+  <path d="M445 175 Q512 135 579 175" fill="none" stroke="white" stroke-width="10" stroke-linecap="round" opacity="0.9"/>
+  <path d="M425 140 Q512 85 599 140" fill="none" stroke="white" stroke-width="9" stroke-linecap="round" opacity="0.7"/>
+  <path d="M405 105 Q512 35 619 105" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- AI Sparkle - large -->
+  <g transform="translate(680, 180)">
+    <path d="M60 0 L72 48 L120 60 L72 72 L60 120 L48 72 L0 60 L48 48 Z"
+          fill="white"/>
+  </g>
+
+  <!-- AI Sparkle - small -->
+  <g transform="translate(760, 300)">
+    <path d="M30 0 L36 24 L60 30 L36 36 L30 60 L24 36 L0 30 L24 24 Z"
+          fill="white"
+          opacity="0.8"/>
+  </g>
+
+  <!-- AI Sparkle - tiny -->
+  <g transform="translate(640, 120)">
+    <path d="M15 0 L18 12 L30 15 L18 18 L15 30 L12 18 L0 15 L12 12 Z"
+          fill="white"
+          opacity="0.6"/>
+  </g>
+</svg>
