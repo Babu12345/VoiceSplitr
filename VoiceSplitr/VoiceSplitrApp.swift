@@ -3,6 +3,8 @@ import SwiftData
 
 @main
 struct VoiceSplitrApp: App {
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             SplitSession.self,
@@ -21,7 +23,11 @@ struct VoiceSplitrApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if hasCompletedOnboarding {
+                ContentView()
+            } else {
+                OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+            }
         }
         .modelContainer(sharedModelContainer)
     }
