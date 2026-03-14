@@ -143,13 +143,29 @@ struct SessionDetailView: View {
 
             Section("Split") {
                 ForEach(session.people) { person in
-                    HStack {
-                        Text(person.name)
-                            .fontWeight(.medium)
-                        Spacer()
-                        Text("$\(String(format: "%.2f", person.shareAmount))")
-                            .fontWeight(.semibold)
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text(person.name)
+                                .fontWeight(.medium)
+                            Spacer()
+                            Text("$\(String(format: "%.2f", person.shareAmount))")
+                                .fontWeight(.semibold)
+                        }
+
+                        ForEach(person.assignedItems) { item in
+                            HStack {
+                                Text(item.name)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                let share = item.totalPrice / Double(max(item.assignedTo.count, 1))
+                                Text("$\(String(format: "%.2f", share))")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
+                    .padding(.vertical, 4)
                 }
             }
 
