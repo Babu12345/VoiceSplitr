@@ -7,7 +7,7 @@ struct VoiceInputView: View {
     var body: some View {
         List {
             Section {
-                Text("Each person should describe what they ordered. Tap the microphone to start recording.")
+                Text("Each person should describe what they ordered, or one person can describe everything — just make sure to clearly name each person. Tap the microphone to start recording.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
