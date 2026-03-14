@@ -1,10 +1,3 @@
-//
-//  VoiceSplitrApp.swift
-//  VoiceSplitr
-//
-//  Created by Babu Wanyeki on 3/14/26.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -12,7 +5,10 @@ import SwiftData
 struct VoiceSplitrApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            SplitSession.self,
+            LineItem.self,
+            Person.self,
+            VoiceTranscript.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

@@ -29,9 +29,22 @@
 		888DB3F82F65CE550061AFE3 /* VoiceSplitrUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoiceSplitrUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		888DB4402F65D3F70061AFE3 /* Exceptions for "VoiceSplitr" folder in "VoiceSplitr" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 888DB3DE2F65CE540061AFE3 /* VoiceSplitr */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		888DB3E12F65CE540061AFE3 /* VoiceSplitr */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				888DB4402F65D3F70061AFE3 /* Exceptions for "VoiceSplitr" folder in "VoiceSplitr" target */,
+			);
 			path = VoiceSplitr;
 			sourceTree = "<group>";
 		};
@@ -400,6 +413,11 @@
 				DEVELOPMENT_TEAM = 96N46HT93Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VoiceSplitr/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "VoiceSplitr needs camera access to photograph receipts\nVoiceSplitr needs camera access to photograph receipts\n";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VoiceSplitr needs microphone access for voice input\n";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "VoiceSplitr needs photo library access to select receipt images\n";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "VoiceSplitr uses speech recognition to understand who ordered what\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,6 +450,11 @@
 				DEVELOPMENT_TEAM = 96N46HT93Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VoiceSplitr/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "VoiceSplitr needs camera access to photograph receipts\nVoiceSplitr needs camera access to photograph receipts\n";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VoiceSplitr needs microphone access for voice input\n";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "VoiceSplitr needs photo library access to select receipt images\n";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "VoiceSplitr uses speech recognition to understand who ordered what\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
