@@ -84,7 +84,7 @@ struct SplitResultsView: View {
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Text("$\(String(format: "%.2f", editItem.price * Double(editItem.quantity)))")
+                    Text("$\(String(format: "%.2f", editItem.price))")
                         .foregroundStyle(.secondary)
                 }
 

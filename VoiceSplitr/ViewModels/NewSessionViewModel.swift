@@ -36,7 +36,7 @@ class NewSessionViewModel {
     var parsedReceipt: ParsedReceipt?
     var editableItems: [ParsedLineItem] = []
     var subtotal: Double {
-        editableItems.reduce(0) { $0 + $1.price * Double($1.quantity) }
+        editableItems.reduce(0) { $0 + $1.price }
     }
     var taxAmount: Double = 0
     var tipPercentage: Double = 18.0
@@ -133,7 +133,7 @@ class NewSessionViewModel {
         isProcessing = true
         errorMessage = nil
 
-        let items = editableItems.map { (name: $0.name, price: $0.price * Double($0.quantity)) }
+        let items = editableItems.map { (name: $0.name, price: $0.price) }
         let transcriptData = transcripts.map { (speaker: Optional($0.speaker), text: $0.text) }
 
         do {
@@ -172,7 +172,7 @@ class NewSessionViewModel {
             guard !assignment.assignedTo.isEmpty else { continue }
 
             let item = editableItems.first { $0.name == assignment.itemName }
-            let price = (item?.price ?? 0) * Double(item?.quantity ?? 1)
+            let price = item?.price ?? 0
             let share = price / Double(assignment.assignedTo.count)
 
             for person in assignment.assignedTo {
@@ -191,7 +191,7 @@ class NewSessionViewModel {
         if !unassignedItems.isEmpty && !personMap.isEmpty {
             let people = Array(personMap.keys)
             for item in unassignedItems {
-                let share = (item.price * Double(item.quantity)) / Double(people.count)
+                let share = item.price / Double(people.count)
                 for person in people {
                     personMap[person]?.items.append((item.name, share))
                     personMap[person]?.total += share
@@ -199,7 +199,7 @@ class NewSessionViewModel {
             }
         }
 
-        let actualSubtotal = editableItems.reduce(0.0) { $0 + $1.price * Double($1.quantity) }
+        let actualSubtotal = editableItems.reduce(0.0) { $0 + $1.price }
 
         splits = personMap.map { name, data in
             let itemsSubtotal = data.total
