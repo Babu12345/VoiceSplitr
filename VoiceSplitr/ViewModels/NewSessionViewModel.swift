@@ -2,6 +2,12 @@ import Foundation
 import SwiftUI
 import SwiftData
 
+struct TranscriptEntry: Identifiable {
+    let id = UUID()
+    var speaker: String
+    var text: String
+}
+
 enum SessionStep: Int, CaseIterable {
     case captureReceipt
     case reviewItems
@@ -36,7 +42,7 @@ class NewSessionViewModel {
     var sessionTitle: String = ""
 
     // Voice
-    var transcripts: [(speaker: String, text: String)] = []
+    var transcripts: [TranscriptEntry] = []
     var currentSpeakerName: String = ""
 
     // Results
@@ -110,7 +116,7 @@ class NewSessionViewModel {
         guard !text.isEmpty else { return }
 
         let speaker = currentSpeakerName.isEmpty ? "Person \(transcripts.count + 1)" : currentSpeakerName
-        transcripts.append((speaker: speaker, text: text))
+        transcripts.append(TranscriptEntry(speaker: speaker, text: text))
         currentSpeakerName = ""
         speechService.currentTranscript = ""
     }

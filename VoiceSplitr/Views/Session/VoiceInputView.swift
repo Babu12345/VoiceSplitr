@@ -27,7 +27,7 @@ struct VoiceInputView: View {
                 }
             }
 
-            Section("Speaker Name") {
+            Section("Speaker Name (optional)") {
                 TextField("e.g., John", text: $viewModel.currentSpeakerName)
             }
 
@@ -75,20 +75,18 @@ struct VoiceInputView: View {
 
             if !viewModel.transcripts.isEmpty {
                 Section("Recorded Transcripts") {
-                    ForEach(Array(viewModel.transcripts.enumerated()), id: \.offset) { index, transcript in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(transcript.speaker)
+                    ForEach($viewModel.transcripts) { $transcript in
+                        VStack(alignment: .leading, spacing: 6) {
+                            TextField("Speaker name", text: $transcript.speaker)
                                 .font(.headline)
-                            Text(transcript.text)
+                            TextField("Transcript", text: $transcript.text, axis: .vertical)
                                 .font(.body)
                                 .foregroundStyle(.secondary)
                         }
                         .padding(.vertical, 4)
                     }
                     .onDelete { offsets in
-                        for offset in offsets {
-                            viewModel.removeTranscript(at: offset)
-                        }
+                        viewModel.transcripts.remove(atOffsets: offsets)
                     }
                 }
             }
