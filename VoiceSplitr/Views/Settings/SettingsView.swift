@@ -9,6 +9,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                #if DEBUG
                 Section {
                     if viewModel.hasStoredKey {
                         HStack {
@@ -61,6 +62,7 @@ struct SettingsView: View {
                 } footer: {
                     Text("Get your API key from console.anthropic.com")
                 }
+                #endif
 
                 Section("About") {
                     HStack {
