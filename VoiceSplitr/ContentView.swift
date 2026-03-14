@@ -126,10 +126,28 @@ struct SessionRowView: View {
 }
 
 struct SessionDetailView: View {
-    let session: SplitSession
+    @Bindable var session: SplitSession
 
     var body: some View {
         List {
+            if let imageData = session.receiptImageData,
+               let uiImage = UIImage(data: imageData) {
+                Section {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 300)
+                        .frame(maxWidth: .infinity)
+                        .listRowInsets(EdgeInsets())
+                } header: {
+                    Text("Receipt")
+                }
+            }
+
+            Section("Title") {
+                TextField("Session name", text: $session.title)
+            }
+
             Section("Items") {
                 ForEach(session.lineItems) { item in
                     HStack {
