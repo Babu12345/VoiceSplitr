@@ -46,7 +46,7 @@ struct NewSessionFlowView: View {
                 if viewModel.currentStep == .results {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Done") {
-                            viewModel.saveSession(to: modelContext)
+                            _ = viewModel.saveSession(to: modelContext)
                             dismiss()
                         }
                     }

@@ -1,7 +1,7 @@
 import Foundation
 import Security
 
-struct KeychainService {
+nonisolated struct KeychainService: Sendable {
     private static let serviceName = "com.wanyekitech.VoiceSplitr"
 
     static func save(key: String, value: String) -> Bool {

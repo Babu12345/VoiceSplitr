@@ -80,7 +80,7 @@ struct ShareResultsView: View {
 
                 // Save & close button
                 Button {
-                    viewModel.saveSession(to: modelContext)
+                    _ = viewModel.saveSession(to: modelContext)
                     dismiss()
                 } label: {
                     Label("Save & Close", systemImage: "checkmark.circle")
