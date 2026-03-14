@@ -1,0 +1,3 @@
+[submodule "proxy-server"]
+	path = proxy-server
+	url = https://github.com/Babu12345/voicesplit-proxy.git
