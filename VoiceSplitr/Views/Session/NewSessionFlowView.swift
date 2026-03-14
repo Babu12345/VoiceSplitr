@@ -32,6 +32,8 @@ struct NewSessionFlowView: View {
                     }
                 }
             }
+            .background(Color.themeBg)
+            .scrollContentBackground(.hidden)
             .navigationTitle(viewModel.currentStep.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -67,7 +69,7 @@ struct NewSessionFlowView: View {
         HStack(spacing: 4) {
             ForEach(SessionStep.allCases, id: \.rawValue) { step in
                 Capsule()
-                    .fill(step.rawValue <= viewModel.currentStep.rawValue ? Color.accentColor : Color.secondary.opacity(0.3))
+                    .fill(step.rawValue <= viewModel.currentStep.rawValue ? LinearGradient.brandGradientHorizontal : LinearGradient(colors: [Color.secondary.opacity(0.3)], startPoint: .leading, endPoint: .trailing))
                     .frame(height: 4)
             }
         }

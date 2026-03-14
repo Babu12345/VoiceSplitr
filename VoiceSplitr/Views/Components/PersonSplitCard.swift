@@ -12,6 +12,7 @@ struct PersonSplitCard: View {
                 Text("$\(String(format: "%.2f", split.total))")
                     .font(.title3)
                     .fontWeight(.bold)
+                    .foregroundStyle(Color.brandBlue)
             }
 
             ForEach(split.items, id: \.name) { item in

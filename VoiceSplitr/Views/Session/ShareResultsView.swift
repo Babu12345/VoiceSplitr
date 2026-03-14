@@ -24,6 +24,7 @@ struct ShareResultsView: View {
                                 Spacer()
                                 Text("$\(String(format: "%.2f", split.total))")
                                     .fontWeight(.bold)
+                                    .foregroundStyle(Color.brandBlue)
                             }
 
                             ForEach(split.items, id: \.name) { item in
@@ -60,22 +61,22 @@ struct ShareResultsView: View {
                         Spacer()
                         Text("$\(String(format: "%.2f", viewModel.splits.reduce(0) { $0 + $1.total }))")
                             .font(.headline)
+                            .foregroundStyle(Color.brandBlue)
                     }
                 }
-                .padding()
-                .background(.background)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+                .gradientCard()
                 .padding(.horizontal)
 
                 // Share button
                 ShareLink(item: viewModel.shareText) {
                     Label("Share Split", systemImage: "square.and.arrow.up")
-                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 14)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
+                        .background(LinearGradient.brandGradient)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
-                .buttonStyle(.borderedProminent)
                 .padding(.horizontal, 40)
 
                 // Save & close button
@@ -84,15 +85,12 @@ struct ShareResultsView: View {
                     dismiss()
                 } label: {
                     Label("Save & Close", systemImage: "checkmark.circle")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.secondary)
                 .padding(.horizontal, 40)
             }
             .padding(.vertical)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.themeBg)
     }
 }

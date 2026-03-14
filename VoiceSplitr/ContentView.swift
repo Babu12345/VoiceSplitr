@@ -16,6 +16,8 @@ struct ContentView: View {
                     sessionListView
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.themeBg)
             .navigationTitle("VoiceSplitr")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -40,17 +42,16 @@ struct ContentView: View {
                 SettingsView()
             }
         }
+        .tint(.brandBlue)
     }
 
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "receipt")
-                .font(.system(size: 60))
-                .foregroundStyle(.secondary)
+        VStack(spacing: 24) {
+            GradientIcon(systemName: "receipt", size: 60)
 
             Text("No Splits Yet")
                 .font(.title2)
-                .fontWeight(.semibold)
+                .fontWeight(.bold)
 
             Text("Take a photo of a receipt and split the bill with friends using your voice.")
                 .font(.body)
@@ -63,10 +64,9 @@ struct ContentView: View {
             } label: {
                 Label("New Split", systemImage: "camera.fill")
                     .font(.headline)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.primary)
+            .padding(.horizontal, 40)
             .padding(.top, 8)
         }
     }
@@ -110,14 +110,15 @@ struct SessionRowView: View {
 
                 Text("$\(String(format: "%.2f", session.totalAmount))")
                     .font(.subheadline)
-                    .fontWeight(.medium)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color.brandBlue)
 
                 Text("\(session.people.count) people")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.brandBlue)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
-                    .background(.fill.tertiary)
+                    .background(Color.brandBlueSoft)
                     .clipShape(Capsule())
             }
         }
@@ -168,6 +169,7 @@ struct SessionDetailView: View {
                             Spacer()
                             Text("$\(String(format: "%.2f", person.shareAmount))")
                                 .fontWeight(.semibold)
+                                .foregroundStyle(Color.brandBlue)
                         }
 
                         ForEach(person.assignedItems) { item in
@@ -209,9 +211,12 @@ struct SessionDetailView: View {
                     Spacer()
                     Text("$\(String(format: "%.2f", session.totalAmount))")
                         .fontWeight(.bold)
+                        .foregroundStyle(Color.brandBlue)
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.themeBg)
         .navigationTitle(session.title)
     }
 }

@@ -101,22 +101,16 @@ struct VoiceInputView: View {
                             showingConsentSheet = true
                         }
                     } label: {
-                        HStack {
-                            Spacer()
-                            if viewModel.isProcessing {
-                                ProgressView()
-                                    .padding(.horizontal, 20)
-                            } else {
-                                Label("Process & Split Bill", systemImage: "wand.and.stars")
-                                    .font(.headline)
-                            }
-                            Spacer()
+                        if viewModel.isProcessing {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Label("Process & Split Bill", systemImage: "wand.and.stars")
                         }
-                        .padding(.vertical, 4)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.primary)
                     .disabled(viewModel.isProcessing)
-                    .listRowInsets(EdgeInsets())
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                     .listRowBackground(Color.clear)
                 }
             }

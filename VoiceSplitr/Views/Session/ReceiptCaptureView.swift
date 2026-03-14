@@ -17,7 +17,7 @@ struct ReceiptCaptureView: View {
                         .scaledToFit()
                         .frame(maxHeight: 400)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .shadow(radius: 4)
+                        .shadow(color: Color.brandBlue.opacity(0.15), radius: 8, y: 4)
                         .padding(.horizontal)
 
                     HStack(spacing: 16) {
@@ -25,7 +25,8 @@ struct ReceiptCaptureView: View {
                             viewModel.receiptImage = nil
                             selectedPhotoItem = nil
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(.secondary)
+                        .frame(width: 120)
 
                         Button {
                             if DataSharingConsent.hasConsented {
@@ -36,20 +37,19 @@ struct ReceiptCaptureView: View {
                         } label: {
                             if viewModel.isProcessing {
                                 ProgressView()
-                                    .padding(.horizontal, 20)
+                                    .tint(.white)
                             } else {
                                 Label("Scan Receipt", systemImage: "doc.text.viewfinder")
                             }
                         }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.primary)
                         .disabled(viewModel.isProcessing)
                     }
+                    .padding(.horizontal, 24)
                 } else {
                     // Image selection options
                     VStack(spacing: 32) {
-                        Image(systemName: "doc.text.viewfinder")
-                            .font(.system(size: 80))
-                            .foregroundStyle(.secondary)
+                        GradientIcon(systemName: "doc.text.viewfinder", size: 60)
                             .padding(.top, 40)
 
                         Text("Take a photo of your receipt or select one from your library")
@@ -63,17 +63,18 @@ struct ReceiptCaptureView: View {
                                 showingCamera = true
                             } label: {
                                 Label("Take Photo", systemImage: "camera.fill")
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 12)
                             }
-                            .buttonStyle(.borderedProminent)
+                            .buttonStyle(.primary)
 
                             PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
                                 Label("Choose from Library", systemImage: "photo.on.rectangle")
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.brandBlue)
+                                    .padding(.vertical, 14)
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 12)
+                                    .background(Color.brandBlueSoft)
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
                             }
-                            .buttonStyle(.bordered)
                         }
                         .padding(.horizontal, 40)
                     }

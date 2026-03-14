@@ -12,7 +12,7 @@ struct DataSharingConsentView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "shield.lefthalf.filled")
                             .font(.system(size: 50))
-                            .foregroundStyle(.tint)
+                            .foregroundStyle(Color.brandBlue)
 
                         Text("Data Sharing Consent")
                             .font(.title2)
@@ -31,7 +31,7 @@ struct DataSharingConsentView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Label("What Data Will Be Shared", systemImage: "doc.text")
                             .font(.headline)
-                            .foregroundStyle(.tint)
+                            .foregroundStyle(Color.brandBlue)
 
                         Text("When you process a bill split, the following information is sent to Anthropic:")
                             .font(.subheadline)
@@ -64,12 +64,12 @@ struct DataSharingConsentView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Label("Who Receives Your Data", systemImage: "building.2")
                             .font(.headline)
-                            .foregroundStyle(.tint)
+                            .foregroundStyle(Color.brandBlue)
 
                         HStack(alignment: .top, spacing: 12) {
                             Image(systemName: "brain.head.profile")
                                 .font(.title2)
-                                .foregroundStyle(.tint)
+                                .foregroundStyle(Color.brandBlue)
                                 .frame(width: 32)
 
                             VStack(alignment: .leading, spacing: 4) {
@@ -87,12 +87,13 @@ struct DataSharingConsentView: View {
                                         Image(systemName: "arrow.up.right")
                                     }
                                     .font(.caption)
+                                    .foregroundStyle(Color.brandBlue)
                                 }
                                 .padding(.top, 4)
                             }
                         }
                         .padding()
-                        .background(Color(.secondarySystemBackground))
+                        .background(Color.brandBlueSoft)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
 
@@ -100,7 +101,7 @@ struct DataSharingConsentView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Label("How Your Data Is Used", systemImage: "gearshape.2")
                             .font(.headline)
-                            .foregroundStyle(.tint)
+                            .foregroundStyle(Color.brandBlue)
 
                         VStack(alignment: .leading, spacing: 8) {
                             BulletPoint(text: "Your data is used solely to parse receipts and match items to people")
@@ -123,6 +124,7 @@ struct DataSharingConsentView: View {
                                 Image(systemName: "arrow.up.right")
                             }
                             .font(.subheadline)
+                            .foregroundStyle(Color.brandBlue)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -136,20 +138,15 @@ struct DataSharingConsentView: View {
                         onAgree()
                     } label: {
                         Text("I Agree to Share Data with Anthropic")
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
+                    .buttonStyle(.primary)
 
                     Button {
                         onCancel()
                     } label: {
                         Text("Cancel")
-                            .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.bordered)
-                    .controlSize(.large)
+                    .buttonStyle(.secondary)
                 }
                 .padding()
                 .background(.ultraThinMaterial)

@@ -43,6 +43,7 @@ struct SplitResultsView: View {
                 Spacer()
                 Text("$\(String(format: "%.2f", viewModel.splits.reduce(0) { $0 + $1.total }))")
                     .font(.headline)
+                    .foregroundStyle(Color.brandBlue)
             }
         }
 
@@ -50,34 +51,20 @@ struct SplitResultsView: View {
             Button {
                 viewModel.currentStep = .share
             } label: {
-                HStack {
-                    Spacer()
-                    Label("Share Results", systemImage: "square.and.arrow.up")
-                        .font(.headline)
-                    Spacer()
-                }
-                .padding(.vertical, 4)
+                Label("Share Results", systemImage: "square.and.arrow.up")
             }
-            .buttonStyle(.borderedProminent)
-            .listRowInsets(EdgeInsets())
+            .buttonStyle(.primary)
+            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 4, trailing: 16))
             .listRowBackground(Color.clear)
-        }
 
-        Section {
             Button {
                 _ = viewModel.saveSession(to: modelContext)
                 dismiss()
             } label: {
-                HStack {
-                    Spacer()
-                    Label("Save & Close", systemImage: "checkmark.circle")
-                        .font(.headline)
-                    Spacer()
-                }
-                .padding(.vertical, 4)
+                Label("Save & Close", systemImage: "checkmark.circle")
             }
-            .buttonStyle(.bordered)
-            .listRowInsets(EdgeInsets())
+            .buttonStyle(.secondary)
+            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 8, trailing: 16))
             .listRowBackground(Color.clear)
         }
     }
@@ -106,7 +93,7 @@ struct SplitResultsView: View {
                     } label: {
                         HStack {
                             Image(systemName: editModel.isAssigned(item: editItem.name, person: person) ? "checkmark.circle.fill" : "circle")
-                                .foregroundStyle(editModel.isAssigned(item: editItem.name, person: person) ? Color.accentColor : .secondary)
+                                .foregroundStyle(editModel.isAssigned(item: editItem.name, person: person) ? Color.brandBlue : .secondary)
                             Text(person)
                                 .foregroundStyle(.primary)
                             Spacer()

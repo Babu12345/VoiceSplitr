@@ -17,9 +17,17 @@ struct RecordingButton: View {
                         .scaleEffect(animationScale)
                 }
 
-                Circle()
-                    .fill(isRecording ? Color.red : Color.accentColor)
-                    .frame(width: 64, height: 64)
+                Group {
+                    if isRecording {
+                        Circle()
+                            .fill(Color.red)
+                    } else {
+                        Circle()
+                            .fill(LinearGradient.brandGradient)
+                    }
+                }
+                .frame(width: 64, height: 64)
+                .shadow(color: (isRecording ? Color.red : Color.brandBlue).opacity(0.4), radius: 8, y: 4)
 
                 Image(systemName: isRecording ? "stop.fill" : "mic.fill")
                     .font(.title)

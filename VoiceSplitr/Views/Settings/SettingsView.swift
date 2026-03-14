@@ -68,7 +68,7 @@ struct SettingsView: View {
                     Link(destination: URL(string: "https://babu12345.github.io/VoiceSplitr/")!) {
                         HStack {
                             Image(systemName: "globe")
-                                .foregroundStyle(.tint)
+                                .foregroundStyle(Color.brandBlue)
                             Text("Visit Website")
                             Spacer()
                             Image(systemName: "arrow.up.right")
@@ -81,7 +81,7 @@ struct SettingsView: View {
                     Link(destination: URL(string: "https://babu12345.github.io/VoiceSplitr/privacy_policy/")!) {
                         HStack {
                             Image(systemName: "hand.raised")
-                                .foregroundStyle(.tint)
+                                .foregroundStyle(Color.brandBlue)
                             Text("Privacy Policy")
                             Spacer()
                             Image(systemName: "arrow.up.right")
@@ -94,7 +94,7 @@ struct SettingsView: View {
                     Link(destination: URL(string: "https://babu12345.github.io/VoiceSplitr/terms/")!) {
                         HStack {
                             Image(systemName: "doc.text")
-                                .foregroundStyle(.tint)
+                                .foregroundStyle(Color.brandBlue)
                             Text("Terms of Use")
                             Spacer()
                             Image(systemName: "arrow.up.right")
@@ -107,7 +107,7 @@ struct SettingsView: View {
                     Link(destination: URL(string: "https://babu12345.github.io/VoiceSplitr/support/")!) {
                         HStack {
                             Image(systemName: "questionmark.circle")
-                                .foregroundStyle(.tint)
+                                .foregroundStyle(Color.brandBlue)
                             Text("Support")
                             Spacer()
                             Image(systemName: "arrow.up.right")
@@ -129,6 +129,8 @@ struct SettingsView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.themeBg)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -50,6 +50,7 @@ struct ReceiptReviewView: View {
                     viewModel.addItem()
                 } label: {
                     Label("Add Item", systemImage: "plus.circle")
+                        .foregroundStyle(Color.brandBlue)
                 }
             }
 
@@ -92,7 +93,7 @@ struct ReceiptReviewView: View {
                                 viewModel.updateTipAmount()
                             }
                             .buttonStyle(.bordered)
-                            .tint(viewModel.tipPercentage == Double(percent) ? .accentColor : .secondary)
+                            .tint(viewModel.tipPercentage == Double(percent) ? Color.brandBlue : .secondary)
                         }
                     }
                 }
@@ -103,6 +104,7 @@ struct ReceiptReviewView: View {
                     Spacer()
                     Text("$\(String(format: "%.2f", viewModel.subtotal + viewModel.taxAmount + viewModel.tipAmount))")
                         .fontWeight(.bold)
+                        .foregroundStyle(Color.brandBlue)
                 }
             }
 
@@ -111,16 +113,10 @@ struct ReceiptReviewView: View {
                     viewModel.recalculateSubtotal()
                     viewModel.currentStep = .voiceInput
                 } label: {
-                    HStack {
-                        Spacer()
-                        Label("Continue to Voice Input", systemImage: "mic.fill")
-                            .font(.headline)
-                        Spacer()
-                    }
-                    .padding(.vertical, 4)
+                    Label("Continue to Voice Input", systemImage: "mic.fill")
                 }
-                .buttonStyle(.borderedProminent)
-                .listRowInsets(EdgeInsets())
+                .buttonStyle(.primary)
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                 .listRowBackground(Color.clear)
             }
         }
