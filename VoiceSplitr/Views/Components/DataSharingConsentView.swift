@@ -33,7 +33,7 @@ struct DataSharingConsentView: View {
                             .font(.headline)
                             .foregroundStyle(Color.brandBlue)
 
-                        Text("When you process a bill split, the following information is sent to Anthropic:")
+                        Text("When you process a bill split, the following information is sent to our AI provider:")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
 
@@ -73,23 +73,13 @@ struct DataSharingConsentView: View {
                                 .frame(width: 32)
 
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Anthropic")
+                                Text("AI Provider")
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
 
-                                Text("Anthropic is an AI safety company that develops Claude, an AI assistant focused on being helpful, harmless, and honest.")
+                                Text("Your data is processed by an AI service to extract receipt items and match them to people. The AI provider handles your data securely.")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
-
-                                Link(destination: URL(string: "https://www.anthropic.com/privacy")!) {
-                                    HStack(spacing: 4) {
-                                        Text("View Anthropic Privacy Policy")
-                                        Image(systemName: "arrow.up.right")
-                                    }
-                                    .font(.caption)
-                                    .foregroundStyle(Color.brandBlue)
-                                }
-                                .padding(.top, 4)
                             }
                         }
                         .padding()
@@ -107,7 +97,7 @@ struct DataSharingConsentView: View {
                             BulletPoint(text: "Your data is used solely to parse receipts and match items to people")
                             BulletPoint(text: "We do not store your receipt images or transcripts on our servers")
                             BulletPoint(text: "Data is transmitted securely using encryption (HTTPS/TLS)")
-                            BulletPoint(text: "Anthropic processes your data according to their privacy policy")
+                            BulletPoint(text: "The AI provider processes your data according to their privacy policy")
                         }
                     }
 
@@ -137,7 +127,7 @@ struct DataSharingConsentView: View {
                     Button {
                         onAgree()
                     } label: {
-                        Text("I Agree to Share Data with Anthropic")
+                        Text("I Agree to Share Data for AI Processing")
                     }
                     .buttonStyle(.primary)
 
