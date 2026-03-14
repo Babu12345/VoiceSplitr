@@ -15,6 +15,10 @@ struct VoiceInputView: View {
                 ForEach(viewModel.editableItems) { item in
                     HStack {
                         Text(item.name)
+                        if item.quantity > 1 {
+                            Text("x\(item.quantity)")
+                                .foregroundStyle(.secondary)
+                        }
                         Spacer()
                         Text("$\(String(format: "%.2f", item.price * Double(item.quantity)))")
                             .foregroundStyle(.secondary)
