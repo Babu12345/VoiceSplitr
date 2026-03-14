@@ -21,12 +21,29 @@ enum ClaudeAPIError: LocalizedError {
 }
 
 actor ClaudeAPIClient {
-    private let baseURL = URL(string: "https://api.anthropic.com/v1/messages")!
+    private let directURL = URL(string: "https://api.anthropic.com/v1/messages")!
     private let apiVersion = "2023-06-01"
     private let model = "claude-sonnet-4-20250514"
     private let keychainKey = "claude_api_key"
 
+    // MARK: - Proxy Configuration
+    // Set your Railway proxy URL here once deployed (e.g. "https://voicesplit-proxy-production.up.railway.app")
+    private static let proxyBaseURL: String? = nil
+    private static let appSecret: String? = nil  // Must match APP_SECRET env var on server
+
+    private var useProxy: Bool {
+        Self.proxyBaseURL != nil
+    }
+
+    private var baseURL: URL {
+        if let proxy = Self.proxyBaseURL {
+            return URL(string: "\(proxy)/v1/messages")!
+        }
+        return directURL
+    }
+
     private var apiKey: String? {
+        if useProxy { return nil }
         if let userKey = KeychainService.load(key: keychainKey) {
             return userKey
         }
@@ -45,15 +62,23 @@ actor ClaudeAPIClient {
     }()
 
     func sendMessage(system: String, userContent: [MessageContent]) async throws -> String {
-        guard let apiKey = apiKey else {
-            throw ClaudeAPIError.noAPIKey
+        if !useProxy {
+            guard apiKey != nil else {
+                throw ClaudeAPIError.noAPIKey
+            }
         }
 
         var request = URLRequest(url: baseURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
         request.setValue(apiVersion, forHTTPHeaderField: "anthropic-version")
+
+        if let apiKey = apiKey {
+            request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        }
+        if let secret = Self.appSecret {
+            request.setValue(secret, forHTTPHeaderField: "x-app-secret")
+        }
 
         let content: [[String: Any]] = userContent.map { item in
             switch item {
