@@ -3,6 +3,7 @@ import SwiftUI
 struct ReceiptReviewView: View {
     @Bindable var viewModel: NewSessionViewModel
     @State private var showingFullReceipt = false
+    @State private var showingSplitInfo = false
 
     var body: some View {
         List {
@@ -25,7 +26,7 @@ struct ReceiptReviewView: View {
                 }
             }
 
-            Section("Receipt Items") {
+            Section {
                 ForEach($viewModel.editableItems) { $item in
                     HStack {
                         VStack(alignment: .leading) {
@@ -58,6 +59,18 @@ struct ReceiptReviewView: View {
                 } label: {
                     Label("Add Item", systemImage: "plus.circle")
                         .foregroundStyle(Color.brandBlue)
+                }
+            } header: {
+                HStack {
+                    Text("Receipt Items")
+                    Spacer()
+                    Button {
+                        showingSplitInfo = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.brandBlue)
+                    }
                 }
             }
 
@@ -125,6 +138,94 @@ struct ReceiptReviewView: View {
         .fullScreenCover(isPresented: $showingFullReceipt) {
             if let image = viewModel.receiptImage {
                 ZoomableReceiptView(image: image)
+            }
+        }
+        .sheet(isPresented: $showingSplitInfo) {
+            SplitInfoSheet()
+        }
+    }
+}
+
+struct SplitInfoSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    // Price
+                    InfoSection(
+                        icon: "dollarsign.circle.fill",
+                        iconColor: .brandBlue,
+                        title: "Price",
+                        description: "The price shown is the line total as it appears on the receipt. For example, if the receipt says \"2x Burger — $18\", the price is $18.00 (not $9.00 per burger)."
+                    )
+
+                    // Quantity
+                    InfoSection(
+                        icon: "number.circle.fill",
+                        iconColor: .brandIndigo,
+                        title: "Quantity",
+                        description: "Quantity tracks how many of that item were ordered. It's informational — the price already reflects the total for all units. Adjusting quantity does not change the price."
+                    )
+
+                    // Splitting
+                    InfoSection(
+                        icon: "person.2.circle.fill",
+                        iconColor: .brandBlueLight,
+                        title: "How Items Are Split",
+                        description: "When multiple people share an item, the line total is divided equally among them. For example, if a $18 item is shared by 2 people, each pays $9.00."
+                    )
+
+                    // Tax & Tip
+                    InfoSection(
+                        icon: "percent",
+                        iconColor: .brandBlue,
+                        title: "Tax & Tip",
+                        description: "Tax and tip are split proportionally based on each person's share of the subtotal. If you ordered 40% of the food, you pay 40% of the tax and tip."
+                    )
+
+                    // Editing
+                    InfoSection(
+                        icon: "pencil.circle.fill",
+                        iconColor: .orange,
+                        title: "Editing Items",
+                        description: "You can edit item names, prices, and quantities. Swipe left to delete an item, or tap \"Add Item\" to add one the AI missed. The subtotal updates automatically."
+                    )
+                }
+                .padding()
+            }
+            .navigationTitle("How Splitting Works")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+private struct InfoSection: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let description: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundStyle(iconColor)
+                .frame(width: 32)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.headline)
+
+                Text(description)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
             }
         }
     }
