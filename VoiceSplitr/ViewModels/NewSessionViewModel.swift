@@ -12,6 +12,7 @@ enum SessionStep: Int, CaseIterable {
     case captureReceipt
     case reviewItems
     case voiceInput
+    case manualAssign
     case results
     case share
 
@@ -20,6 +21,7 @@ enum SessionStep: Int, CaseIterable {
         case .captureReceipt: return "Scan Receipt"
         case .reviewItems: return "Review Items"
         case .voiceInput: return "Voice Input"
+        case .manualAssign: return "Assign Items"
         case .results: return "Split Results"
         case .share: return "Share"
         }
@@ -56,6 +58,7 @@ class NewSessionViewModel {
     // State
     var isProcessing = false
     var errorMessage: String?
+    var usedManualAssign = false
 
     // Services
     let receiptParser = ReceiptParsingService()

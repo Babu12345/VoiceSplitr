@@ -29,6 +29,8 @@ struct NewSessionFlowView: View {
                             ReceiptReviewView(viewModel: viewModel)
                         case .voiceInput:
                             VoiceInputView(viewModel: viewModel)
+                        case .manualAssign:
+                            ManualAssignView(viewModel: viewModel)
                         case .results:
                             SplitResultsView(viewModel: viewModel)
                         case .share:
@@ -84,20 +86,30 @@ struct NewSessionFlowView: View {
         }
     }
 
+    private var visibleSteps: [SessionStep] {
+        if viewModel.usedManualAssign {
+            return [.captureReceipt, .reviewItems, .manualAssign, .results, .share]
+        } else {
+            return [.captureReceipt, .reviewItems, .voiceInput, .results, .share]
+        }
+    }
+
     private var stepIndicator: some View {
-        HStack(spacing: 4) {
-            ForEach(SessionStep.allCases, id: \.rawValue) { step in
+        let steps = visibleSteps
+        let currentIndex = steps.firstIndex(of: viewModel.currentStep) ?? 0
+        return HStack(spacing: 4) {
+            ForEach(Array(steps.enumerated()), id: \.element.rawValue) { index, _ in
                 Capsule()
-                    .fill(step.rawValue <= viewModel.currentStep.rawValue ? LinearGradient.brandGradientHorizontal : LinearGradient(colors: [Color.secondary.opacity(0.3)], startPoint: .leading, endPoint: .trailing))
+                    .fill(index <= currentIndex ? LinearGradient.brandGradientHorizontal : LinearGradient(colors: [Color.secondary.opacity(0.3)], startPoint: .leading, endPoint: .trailing))
                     .frame(height: 4)
             }
         }
     }
 
     private func goBack() {
-        let currentRaw = viewModel.currentStep.rawValue
-        if currentRaw > 0, let previous = SessionStep(rawValue: currentRaw - 1) {
-            viewModel.currentStep = previous
-        }
+        let steps = visibleSteps
+        guard let currentIndex = steps.firstIndex(of: viewModel.currentStep),
+              currentIndex > 0 else { return }
+        viewModel.currentStep = steps[currentIndex - 1]
     }
 }

@@ -126,12 +126,24 @@ struct ReceiptReviewView: View {
 
             Section {
                 Button {
+                    viewModel.usedManualAssign = false
                     viewModel.currentStep = .voiceInput
                 } label: {
                     Label("Continue to Voice Input", systemImage: "mic.fill")
                 }
                 .buttonStyle(.primary)
-                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 4, trailing: 16))
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+
+                Button {
+                    viewModel.usedManualAssign = true
+                    viewModel.currentStep = .manualAssign
+                } label: {
+                    Label("Assign Manually", systemImage: "person.2.fill")
+                }
+                .buttonStyle(.secondary)
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 8, trailing: 16))
                 .listRowBackground(Color.clear)
             }
         }
