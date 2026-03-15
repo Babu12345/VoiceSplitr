@@ -78,7 +78,21 @@ class NewSessionViewModel {
         errorMessage = nil
 
         do {
-            let parsed = try await receiptParser.parseReceipt(imageData: imageData)
+            let parsed: ParsedReceipt
+            do {
+                parsed = try await receiptParser.parseReceipt(imageData: imageData)
+            } catch let apiError as ClaudeAPIError {
+                if case .httpError(let code, _) = apiError, code == 400 || code == 413 {
+                    // Image too large — resize and retry
+                    let resized = Self.resizeImage(image, maxDimension: 2048)
+                    guard let smallerData = resized.jpegData(compressionQuality: 0.7) else {
+                        throw apiError
+                    }
+                    parsed = try await receiptParser.parseReceipt(imageData: smallerData)
+                } else {
+                    throw apiError
+                }
+            }
             await MainActor.run {
                 self.parsedReceipt = parsed
                 self.editableItems = parsed.items
@@ -311,5 +325,18 @@ class NewSessionViewModel {
         text += "\nSplit with VoiceSplitr"
 
         return text
+    }
+
+    // MARK: - Image Resize
+
+    static func resizeImage(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
+        let size = image.size
+        guard max(size.width, size.height) > maxDimension else { return image }
+        let scale = maxDimension / max(size.width, size.height)
+        let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+        }
     }
 }
