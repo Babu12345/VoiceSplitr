@@ -4,6 +4,7 @@ struct ManualAssignView: View {
     @Bindable var viewModel: NewSessionViewModel
     @State private var editModel = EditAssignmentModel()
     @State private var newPersonName = ""
+    @State private var showingAssignInfo = false
 
     var body: some View {
         List {
@@ -39,6 +40,24 @@ struct ManualAssignView: View {
             }
 
             if !editModel.people.isEmpty {
+                Section {
+                    Text("Tap each person who shared an item. Unassigned items are split equally among everyone.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                } header: {
+                    HStack {
+                        Text("Assign Items")
+                        Spacer()
+                        Button {
+                            showingAssignInfo = true
+                        } label: {
+                            Image(systemName: "info.circle")
+                                .font(.subheadline)
+                                .foregroundStyle(Color.brandBlue)
+                        }
+                    }
+                }
+
                 ForEach(editModel.items) { editItem in
                     Section {
                         HStack {
@@ -91,6 +110,9 @@ struct ManualAssignView: View {
                 }
             }
         }
+        .sheet(isPresented: $showingAssignInfo) {
+            AssignInfoSheet()
+        }
         .onAppear {
             if editModel.people.isEmpty && editModel.items.isEmpty {
                 editModel = EditAssignmentModel(
@@ -125,5 +147,53 @@ struct ManualAssignView: View {
         viewModel.assignmentResult = BillAssignmentResult(assignments: assignments, people: people)
         viewModel.calculateFinalSplits()
         viewModel.currentStep = .results
+    }
+}
+
+struct AssignInfoSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    InfoSection(
+                        icon: "checkmark.circle.fill",
+                        iconColor: .brandBlue,
+                        title: "Assigning Items",
+                        description: "Tap each person who ordered or shared an item. You can assign an item to multiple people — the cost will be split equally among them."
+                    )
+
+                    InfoSection(
+                        icon: "person.2.circle.fill",
+                        iconColor: .brandIndigo,
+                        title: "Unassigned Items",
+                        description: "Any items left unassigned will be split equally among everyone. This is useful for shared appetizers, drinks, or sides that the whole table enjoyed."
+                    )
+
+                    InfoSection(
+                        icon: "percent",
+                        iconColor: .brandBlueLight,
+                        title: "Tax & Tip",
+                        description: "Tax and tip are split proportionally based on each person's share of the subtotal. If you ordered 40% of the food, you pay 40% of the tax and tip."
+                    )
+
+                    InfoSection(
+                        icon: "pencil.circle.fill",
+                        iconColor: .orange,
+                        title: "Editing After",
+                        description: "You can always edit assignments on the results page by tapping \"Edit\" — no need to get everything perfect the first time."
+                    )
+                }
+                .padding()
+            }
+            .navigationTitle("How Assigning Works")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
     }
 }

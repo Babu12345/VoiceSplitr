@@ -227,7 +227,7 @@ struct SplitInfoSheet: View {
     }
 }
 
-private struct InfoSection: View {
+struct InfoSection: View {
     let icon: String
     let iconColor: Color
     let title: String
