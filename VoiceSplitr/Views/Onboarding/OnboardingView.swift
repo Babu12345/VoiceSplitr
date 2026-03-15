@@ -14,8 +14,8 @@ struct OnboardingView: View {
         OnboardingPage(
             icon: "mic.fill",
             iconColor: .brandIndigo,
-            title: "Split by Voice",
-            description: "Just say who ordered what — or have one person describe everything. AI matches items to people automatically."
+            title: "Voice or Manual",
+            description: "Say who ordered what and AI matches items automatically — or assign items manually by tapping. Your choice."
         ),
         OnboardingPage(
             icon: "person.3.fill",
