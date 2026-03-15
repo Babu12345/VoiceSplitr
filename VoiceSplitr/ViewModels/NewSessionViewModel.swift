@@ -216,6 +216,9 @@ class NewSessionViewModel {
             }
         }
 
+        // Remove people with no items assigned (e.g. speaker who only described others' orders)
+        personMap = personMap.filter { !$0.value.items.isEmpty }
+
         let actualSubtotal = editableItems.reduce(0.0) { $0 + $1.price }
 
         let sortedPeople = personMap.sorted { $0.key < $1.key }

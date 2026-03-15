@@ -6,6 +6,7 @@ struct SplitResultsView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var isEditing = false
     @State private var editModel = EditAssignmentModel()
+    @State private var newPersonName = ""
 
     var body: some View {
         List {
@@ -74,6 +75,37 @@ struct SplitResultsView: View {
 
     @ViewBuilder
     private var editingContent: some View {
+        Section("People") {
+            ForEach(editModel.people, id: \.self) { person in
+                HStack {
+                    Text(person)
+                    Spacer()
+                    Button(role: .destructive) {
+                        removePerson(person)
+                    } label: {
+                        Image(systemName: "minus.circle.fill")
+                            .foregroundStyle(.red)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            HStack {
+                TextField("Add person", text: $newPersonName)
+                    .textInputAutocapitalization(.words)
+                    .onSubmit { addPerson() }
+
+                Button {
+                    addPerson()
+                } label: {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundStyle(newPersonName.trimmingCharacters(in: .whitespaces).isEmpty ? .secondary : Color.brandBlue)
+                }
+                .buttonStyle(.plain)
+                .disabled(newPersonName.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+        }
+
         ForEach(editModel.items) { editItem in
             Section {
                 HStack {
@@ -117,11 +149,23 @@ struct SplitResultsView: View {
     }
 
     private func applyEdits() {
-        guard var result = viewModel.assignmentResult else { return }
+        var result = viewModel.assignmentResult ?? BillAssignmentResult(assignments: [], people: [])
         result.assignments = editModel.toAssignments()
+        result.people = editModel.people
         viewModel.assignmentResult = result
         viewModel.calculateFinalSplits()
         isEditing = false
+    }
+
+    private func addPerson() {
+        let name = newPersonName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty, !editModel.people.contains(name) else { return }
+        editModel.addPerson(name)
+        newPersonName = ""
+    }
+
+    private func removePerson(_ person: String) {
+        editModel.removePerson(person)
     }
 }
 
@@ -163,6 +207,20 @@ class EditAssignmentModel {
     func toggle(item: String, person: String) {
         let current = assignments[item]?[person] ?? false
         assignments[item]?[person] = !current
+    }
+
+    func addPerson(_ name: String) {
+        people.append(name)
+        for item in items {
+            assignments[item.name]?[name] = false
+        }
+    }
+
+    func removePerson(_ name: String) {
+        people.removeAll { $0 == name }
+        for item in items {
+            assignments[item.name]?[name] = nil
+        }
     }
 
     func toAssignments() -> [ItemAssignment] {
