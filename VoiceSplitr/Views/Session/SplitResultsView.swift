@@ -76,10 +76,14 @@ struct SplitResultsView: View {
     @ViewBuilder
     private var editingContent: some View {
         Section("People") {
-            ForEach(editModel.people, id: \.self) { person in
+            ForEach(Array(editModel.people.enumerated()), id: \.offset) { index, person in
                 HStack {
-                    Text(person)
-                    Spacer()
+                    TextField("Name", text: Binding(
+                        get: { editModel.people[index] },
+                        set: { editModel.renamePerson(at: index, to: $0) }
+                    ))
+                    .textInputAutocapitalization(.words)
+
                     Button(role: .destructive) {
                         removePerson(person)
                     } label: {
@@ -207,6 +211,18 @@ class EditAssignmentModel {
     func toggle(item: String, person: String) {
         let current = assignments[item]?[person] ?? false
         assignments[item]?[person] = !current
+    }
+
+    func renamePerson(at index: Int, to newName: String) {
+        let oldName = people[index]
+        guard oldName != newName else { return }
+        people[index] = newName
+        for item in items {
+            if let value = assignments[item.name]?[oldName] {
+                assignments[item.name]?[oldName] = nil
+                assignments[item.name]?[newName] = value
+            }
+        }
     }
 
     func addPerson(_ name: String) {
