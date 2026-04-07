@@ -133,8 +133,7 @@ class NewSessionViewModel {
         let text = speechService.currentTranscript
         guard !text.isEmpty else { return }
 
-        let speaker = currentSpeakerName.isEmpty ? "Person \(transcripts.count + 1)" : currentSpeakerName
-        transcripts.append(TranscriptEntry(speaker: speaker, text: text))
+        transcripts.append(TranscriptEntry(speaker: currentSpeakerName, text: text))
         currentSpeakerName = ""
         speechService.currentTranscript = ""
     }
@@ -144,6 +143,23 @@ class NewSessionViewModel {
         transcripts.remove(at: index)
     }
 
+    /// Builds the (speaker, text) payload sent to the bill assigner.
+    /// - Typed names win and are whitespace-trimmed.
+    /// - Untyped transcripts are tagged "Speaker N", numbered only across untyped entries.
+    static func buildTranscriptData(
+        from transcripts: [TranscriptEntry]
+    ) -> [(speaker: String?, text: String)] {
+        var counter = 0
+        return transcripts.map { entry in
+            let typed = entry.speaker.trimmingCharacters(in: .whitespaces)
+            if !typed.isEmpty {
+                return (speaker: typed, text: entry.text)
+            }
+            counter += 1
+            return (speaker: "Speaker \(counter)", text: entry.text)
+        }
+    }
+
     // MARK: - Bill Assignment
 
     func processAssignments() async {
@@ -151,7 +167,7 @@ class NewSessionViewModel {
         errorMessage = nil
 
         let items = editableItems.map { (name: $0.name, price: $0.price) }
-        let transcriptData = transcripts.map { (speaker: Optional($0.speaker), text: $0.text) }
+        let transcriptData = Self.buildTranscriptData(from: transcripts)
 
         do {
             let result = try await billAssigner.assignItems(
