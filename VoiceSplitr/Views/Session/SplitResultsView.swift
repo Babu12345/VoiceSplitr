@@ -76,16 +76,20 @@ struct SplitResultsView: View {
     @ViewBuilder
     private var editingContent: some View {
         Section("People") {
-            ForEach(Array(editModel.people.enumerated()), id: \.offset) { index, person in
+            ForEach(editModel.people) { person in
                 HStack {
                     TextField("Name", text: Binding(
-                        get: { editModel.people[index] },
-                        set: { editModel.renamePerson(at: index, to: $0) }
+                        get: {
+                            editModel.people.first(where: { $0.id == person.id })?.name ?? ""
+                        },
+                        set: { newName in
+                            editModel.renamePerson(id: person.id, to: newName)
+                        }
                     ))
                     .textInputAutocapitalization(.words)
 
                     Button(role: .destructive) {
-                        removePerson(person)
+                        editModel.removePerson(id: person.id)
                     } label: {
                         Image(systemName: "minus.circle.fill")
                             .foregroundStyle(.red)
@@ -124,14 +128,14 @@ struct SplitResultsView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                ForEach(editModel.people, id: \.self) { person in
+                ForEach(editModel.people) { person in
                     Button {
-                        editModel.toggle(item: editItem.name, person: person)
+                        editModel.toggle(item: editItem.name, personID: person.id)
                     } label: {
                         HStack {
-                            Image(systemName: editModel.isAssigned(item: editItem.name, person: person) ? "checkmark.circle.fill" : "circle")
-                                .foregroundStyle(editModel.isAssigned(item: editItem.name, person: person) ? Color.brandBlue : .secondary)
-                            Text(person)
+                            Image(systemName: editModel.isAssigned(item: editItem.name, personID: person.id) ? "checkmark.circle.fill" : "circle")
+                                .foregroundStyle(editModel.isAssigned(item: editItem.name, personID: person.id) ? Color.brandBlue : .secondary)
+                            Text(person.name)
                                 .foregroundStyle(.primary)
                             Spacer()
                         }
@@ -155,7 +159,7 @@ struct SplitResultsView: View {
     private func applyEdits() {
         var result = viewModel.assignmentResult ?? BillAssignmentResult(assignments: [], people: [])
         result.assignments = editModel.toAssignments()
-        result.people = editModel.people
+        result.people = editModel.people.map { $0.name }
         viewModel.assignmentResult = result
         viewModel.calculateFinalSplits()
         isEditing = false
@@ -163,13 +167,9 @@ struct SplitResultsView: View {
 
     private func addPerson() {
         let name = newPersonName.trimmingCharacters(in: .whitespaces)
-        guard !name.isEmpty, !editModel.people.contains(name) else { return }
+        guard !name.isEmpty, !editModel.people.contains(where: { $0.name == name }) else { return }
         editModel.addPerson(name)
         newPersonName = ""
-    }
-
-    private func removePerson(_ person: String) {
-        editModel.removePerson(person)
     }
 }
 
@@ -184,64 +184,65 @@ class EditAssignmentModel {
         let quantity: Int
     }
 
+    struct PersonEntry: Identifiable, Hashable {
+        let id: UUID
+        var name: String
+    }
+
     var items: [EditItem] = []
-    var people: [String] = []
-    var assignments: [String: [String: Bool]] = [:]  // [itemName: [personName: Bool]]
+    var people: [PersonEntry] = []
+    var assignments: [String: [UUID: Bool]] = [:]  // [itemName: [personID: Bool]]
 
     init() {}
 
     init(items: [ParsedLineItem], people: [String], assignments: [ItemAssignment]) {
         self.items = items.map { EditItem(id: $0.id, name: $0.name, price: $0.price, quantity: $0.quantity) }
-        self.people = people
+        self.people = people.map { PersonEntry(id: UUID(), name: $0) }
 
         for item in items {
-            var personMap: [String: Bool] = [:]
+            var personMap: [UUID: Bool] = [:]
             let assignment = assignments.first { $0.itemName == item.name }
-            for person in people {
-                personMap[person] = assignment?.assignedTo.contains(person) ?? false
+            for person in self.people {
+                personMap[person.id] = assignment?.assignedTo.contains(person.name) ?? false
             }
             self.assignments[item.name] = personMap
         }
     }
 
-    func isAssigned(item: String, person: String) -> Bool {
-        assignments[item]?[person] ?? false
+    func isAssigned(item: String, personID: UUID) -> Bool {
+        assignments[item]?[personID] ?? false
     }
 
-    func toggle(item: String, person: String) {
-        let current = assignments[item]?[person] ?? false
-        assignments[item]?[person] = !current
+    func toggle(item: String, personID: UUID) {
+        let current = assignments[item]?[personID] ?? false
+        assignments[item]?[personID] = !current
     }
 
-    func renamePerson(at index: Int, to newName: String) {
-        let oldName = people[index]
-        guard oldName != newName else { return }
-        people[index] = newName
-        for item in items {
-            if let value = assignments[item.name]?[oldName] {
-                assignments[item.name]?[oldName] = nil
-                assignments[item.name]?[newName] = value
-            }
-        }
+    func renamePerson(id: UUID, to newName: String) {
+        guard let idx = people.firstIndex(where: { $0.id == id }) else { return }
+        people[idx].name = newName
     }
 
     func addPerson(_ name: String) {
-        people.append(name)
+        let entry = PersonEntry(id: UUID(), name: name)
+        people.append(entry)
         for item in items {
-            assignments[item.name]?[name] = false
+            assignments[item.name]?[entry.id] = false
         }
     }
 
-    func removePerson(_ name: String) {
-        people.removeAll { $0 == name }
+    func removePerson(id: UUID) {
+        people.removeAll { $0.id == id }
         for item in items {
-            assignments[item.name]?[name] = nil
+            assignments[item.name]?[id] = nil
         }
     }
 
     func toAssignments() -> [ItemAssignment] {
         items.map { item in
-            let assigned = people.filter { assignments[item.name]?[$0] == true }
+            let assigned = people
+                .filter { assignments[item.name]?[$0.id] == true }
+                .map { $0.name }
             return ItemAssignment(itemName: item.name, assignedTo: assigned)
         }
     }

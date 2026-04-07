@@ -9,12 +9,12 @@ struct ManualAssignView: View {
     var body: some View {
         List {
             Section("People") {
-                ForEach(editModel.people, id: \.self) { person in
+                ForEach(editModel.people) { person in
                     HStack {
-                        Text(person)
+                        Text(person.name)
                         Spacer()
                         Button(role: .destructive) {
-                            removePerson(person)
+                            editModel.removePerson(id: person.id)
                         } label: {
                             Image(systemName: "minus.circle.fill")
                                 .foregroundStyle(.red)
@@ -72,14 +72,14 @@ struct ManualAssignView: View {
                                 .foregroundStyle(.secondary)
                         }
 
-                        ForEach(editModel.people, id: \.self) { person in
+                        ForEach(editModel.people) { person in
                             Button {
-                                editModel.toggle(item: editItem.name, person: person)
+                                editModel.toggle(item: editItem.name, personID: person.id)
                             } label: {
                                 HStack {
-                                    Image(systemName: editModel.isAssigned(item: editItem.name, person: person) ? "checkmark.circle.fill" : "circle")
-                                        .foregroundStyle(editModel.isAssigned(item: editItem.name, person: person) ? Color.brandBlue : .secondary)
-                                    Text(person)
+                                    Image(systemName: editModel.isAssigned(item: editItem.name, personID: person.id) ? "checkmark.circle.fill" : "circle")
+                                        .foregroundStyle(editModel.isAssigned(item: editItem.name, personID: person.id) ? Color.brandBlue : .secondary)
+                                    Text(person.name)
                                         .foregroundStyle(.primary)
                                     Spacer()
                                 }
@@ -126,24 +126,14 @@ struct ManualAssignView: View {
 
     private func addPerson() {
         let name = newPersonName.trimmingCharacters(in: .whitespaces)
-        guard !name.isEmpty, !editModel.people.contains(name) else { return }
-        editModel.people.append(name)
-        for item in editModel.items {
-            editModel.assignments[item.name]?[name] = false
-        }
+        guard !name.isEmpty, !editModel.people.contains(where: { $0.name == name }) else { return }
+        editModel.addPerson(name)
         newPersonName = ""
-    }
-
-    private func removePerson(_ person: String) {
-        editModel.people.removeAll { $0 == person }
-        for item in editModel.items {
-            editModel.assignments[item.name]?[person] = nil
-        }
     }
 
     private func calculateAndContinue() {
         let assignments = editModel.toAssignments()
-        let people = editModel.people
+        let people = editModel.people.map { $0.name }
         viewModel.assignmentResult = BillAssignmentResult(assignments: assignments, people: people)
         viewModel.calculateFinalSplits()
         viewModel.currentStep = .results
