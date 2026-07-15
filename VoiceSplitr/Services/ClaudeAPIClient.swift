@@ -23,7 +23,7 @@ enum ClaudeAPIError: LocalizedError {
 actor ClaudeAPIClient {
     private let directURL = URL(string: "https://api.anthropic.com/v1/messages")!
     private let apiVersion = "2023-06-01"
-    private let model = "claude-sonnet-4-20250514"
+    private let model = "claude-sonnet-4-6"
     private let keychainKey = "claude_api_key"
 
     // MARK: - Proxy Configuration
