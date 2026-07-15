@@ -5,6 +5,10 @@ enum ClaudeAPIError: LocalizedError {
     case invalidResponse
     case httpError(Int, String)
     case decodingError(String)
+    case modelUnavailable
+    case authenticationFailed
+    case rateLimited
+    case serviceUnavailable
 
     var errorDescription: String? {
         switch self {
@@ -16,6 +20,14 @@ enum ClaudeAPIError: LocalizedError {
             return "API error (\(code)): \(message)"
         case .decodingError(let message):
             return "Failed to parse response: \(message)"
+        case .modelUnavailable:
+            return "Receipt scanning needs an update. Please install the latest version of VoiceSplitr from the App Store."
+        case .authenticationFailed:
+            return "Could not authenticate with the scanning service. If you're using your own API key, please check it in Settings."
+        case .rateLimited:
+            return "Too many requests right now. Please wait a moment and try again."
+        case .serviceUnavailable:
+            return "The scanning service is temporarily busy. Please try again in a few minutes."
         }
     }
 }
@@ -100,8 +112,7 @@ actor ClaudeAPIClient {
         }
 
         guard httpResponse.statusCode == 200 else {
-            let errorBody = String(data: data, encoding: .utf8) ?? "Unknown error"
-            throw ClaudeAPIError.httpError(httpResponse.statusCode, errorBody)
+            throw Self.mapError(statusCode: httpResponse.statusCode, data: data)
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -112,6 +123,33 @@ actor ClaudeAPIClient {
         }
 
         return text
+    }
+
+    /// Maps a non-200 API response to a user-presentable error.
+    /// 400/413 stay as .httpError — callers pattern-match those codes to retry with a smaller image.
+    private static func mapError(statusCode: Int, data: Data) -> ClaudeAPIError {
+        // API error bodies look like: {"type":"error","error":{"type":"...","message":"..."}}
+        var apiMessage = "Unknown error"
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let error = json["error"] as? [String: Any],
+           let message = error["message"] as? String {
+            apiMessage = message
+        } else if let raw = String(data: data, encoding: .utf8), !raw.isEmpty {
+            apiMessage = raw
+        }
+
+        switch statusCode {
+        case 404:
+            return .modelUnavailable
+        case 401, 403:
+            return .authenticationFailed
+        case 429:
+            return .rateLimited
+        case 500...:
+            return .serviceUnavailable
+        default:
+            return .httpError(statusCode, apiMessage)
+        }
     }
 
     func testConnection() async throws -> Bool {
